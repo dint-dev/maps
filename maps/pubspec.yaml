@@ -1,0 +1,50 @@
+name: maps
+description:
+  A cross-platform geographic maps package. Supports Apple MapKit, Bing Maps, and Google Maps. Works
+  in all platforms supported by Flutter, including browsers.
+version: 0.1.0
+homepage: https://github.com/dint-dev/maps
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  # Maintained by a individual developer.
+  # The constraint is fixed for security.
+  apple_maps_flutter: 0.1.1+1
+
+  # Maintained by Google.
+  collection: ^1.14.0
+
+  # Maintained by dint.dev.
+  # Contains ECDSA P-256 for signing Apple Maps requests.
+  cryptography: ^1.2.0
+
+  # Maintained by dint.dev.
+  # Contains `GeoPoint` implementation we use in this package.
+  database: ^0.3.0
+
+  flutter:
+    sdk: flutter
+
+  # Maintained by Google.
+  google_maps_flutter: ^0.5.0
+
+  # Maintained by Google.
+  js: ^0.6.0
+
+  # Maintained by Google.
+  meta: ^1.1.8
+
+  # Maintained by Google.
+  url_launcher: ^5.4.10
+
+  # Maintained by dint.dev.
+  web_browser: ^0.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # Maintained by Google.
+  pedantic: ^1.9.0

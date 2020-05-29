@@ -1,0 +1,21 @@
+name: Dart CI
+
+on: push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image:  oursky/flutter:1.17.1
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Install dependencies
+        run: flutter pub get --suppress-analytics
+        working-directory: maps
+
+      - name: Run tests
+        run: flutter test --suppress-analytics
+        working-directory: maps
