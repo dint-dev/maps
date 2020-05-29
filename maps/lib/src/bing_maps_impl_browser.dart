@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import 'dart:html' as html;
-import 'dart:js' as js;
 
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';

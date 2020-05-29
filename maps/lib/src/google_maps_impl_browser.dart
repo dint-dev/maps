@@ -18,7 +18,6 @@ import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 
 import 'google_maps_js_bindings.dart' as google_maps;
-import 'dart:js' as js;
 import 'internal/js.dart';
 
 Widget buildGoogleMapsJs(GoogleMapsJsAdapter adapter, MapWidget mapWidget) {

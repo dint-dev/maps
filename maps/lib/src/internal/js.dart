@@ -16,8 +16,8 @@ import 'dart:async';
 import 'dart:html' as html;
 import 'dart:js' as js;
 
-import 'package:web_browser/web_browser.dart';
 import 'package:flutter/widgets.dart';
+import 'package:web_browser/web_browser.dart';
 
 Widget buildHtmlViewFromElement(html.Element element) {
   return WebNode(element);

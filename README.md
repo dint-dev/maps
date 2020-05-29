@@ -22,7 +22,7 @@ Pull requests are welcome!
 ## 1.Add dependency
 ```yaml
 dependencies:
-  maps: ^0.1.1
+  maps: ^0.1.2
 ```
 
 ## 2.Define configuration
@@ -32,6 +32,9 @@ each widget separately.
 
 Your main function should look something like this:
 ```dart
+// ...
+import 'package:maps/maps.dart';
+
 void main() {
   MapAdapter.defaultInstance = const MapAdapter.platformSpecific(
     android: GoogleMapsNativeAdapter(apiKey:'GOOGLE MAPS API KEY'),
@@ -50,7 +53,7 @@ void main() {
 ### MapWidget
 [MapWidget](https://pub.dev/documentation/maps/latest/maps/MapWidget-class.html) is a Flutter widget that uses the map engine you chose:
 ```dart
-import 'package:flutter/widgets.dart';
+// ...
 import 'package:maps/maps.dart';
 
 final widget = MapWidget(
@@ -84,48 +87,92 @@ Future<void> main() async {
 
 
 # Supported map providers
-## Apple Maps
-Available implementations:
-  * [AppleMapsNativeAdapter](https://pub.dev/documentation/maps/latest/maps/AppleMapsNativeAdapter-class.html) (iOS)
-    * Uses [Apple MapKit](https://developer.apple.com/documentation/mapkit).
-      Currently depends on the Flutter package [apple_maps_flutter](https://pub.dev/packages/apple_maps_flutter)
-      (by a third-party developer).
-  * [AppleMapsJsAdapter](https://pub.dev/documentation/maps/latest/maps/AppleMapsJsAdapter-class.html) (browsers)
-    * Uses [Apple MapKit JS](https://developer.apple.com/documentation/mapkitjs).
-  * [AppleMapsStaticAdapter](https://pub.dev/documentation/maps/latest/maps/AppleMapsStaticAdapter-class.html) (all platforms)
-    * Uses [Apple Maps Web Snapshots API](https://developer.apple.com/documentation/snapshots).
+## Apple Maps APIs
+### iOS
+  * [AppleMapsNativeAdapter](https://pub.dev/documentation/maps/latest/maps/AppleMapsNativeAdapter-class.html)
+    enables you to use [Apple MapKit](https://developer.apple.com/documentation/mapkit).
+    The current implementation depends on the Flutter package [apple_maps_flutter](https://pub.dev/packages/apple_maps_flutter),
+    a package by a third-party developer.
+  * The adapter doesn't require API credentials.
 
-The iOS API does not require API credentials. For using other APIs you need to obtain API
-credentials from Apple. API requests are signed with your ECDSA P-256 key pair.
+In `ios/Runner/Info.plist`, you should have something like:
+```xml
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>Privacy - Location When In Use Usage Description</key>
+	<string>A description of your privacy policy.</string>
+```
 
-## Bing Maps
-Available implementations:
-  * [BingMapsIframeAdapter](https://pub.dev/documentation/maps/latest/maps/BingMapsIframeAdapter-class.html) (browsers)
-    * Uses [Bing Maps Custom Map URLs](https://docs.microsoft.com/en-us/bingmaps/articles/create-a-custom-map-url).
-    * Note that markers and many other features are unsupported.
-  * [BingMapsJsAdapter](https://pub.dev/documentation/maps/latest/maps/BingMapsJsAdapter-class.html) (browsers)
-    * Uses [Bing Maps Javascript API](https://docs.microsoft.com/en-us/bingmaps/v8-web-control/).
-  * [BingMapsStaticAdapter](https://pub.dev/documentation/maps/latest/maps/BingMapsStaticAdapter-class.html) (all platforms)
-    * Uses [Bing Maps REST API for static maps](https://docs.microsoft.com/en-us/bingmaps/rest-services/imagery/get-a-static-map).
+### Javascript
+  * [AppleMapsJsAdapter](https://pub.dev/documentation/maps/latest/maps/AppleMapsJsAdapter-class.html)
+    enables you to uses [Apple MapKit JS](https://developer.apple.com/documentation/mapkitjs).
+  * The adapter requires you to have API credentials (ECDSA P-256 key pair).
 
-Bing Maps may allow you to use the _iframe_ API without API credentials. For using other APIs, you
-need to obtain API credentials from Microsoft. You can do that in the
-[Bing Maps API website](https://docs.microsoft.com/en-us/bingmaps/).
+### Images
+  * [AppleMapsStaticAdapter](https://pub.dev/documentation/maps/latest/maps/AppleMapsStaticAdapter-class.html)
+    enables you to use [Apple Maps Web Snapshots API](https://developer.apple.com/documentation/snapshots).
+  * The adapter requires you to have API credentials (ECDSA P-256 key pair).
 
-## Google Maps
-Available implementations:
-  * [GoogleMapsIframeAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsIframeAdapter-class.html) (browsers)
-    * Uses [Google Maps Embed API](https://developers.google.com/maps/documentation/embed/guide).
-    * Note that markers and many other features are unsupported.
-  * [GoogleMapsJsAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsJsAdapter-class.html) (browsers)
-    * Uses [Google Maps Javascript API](https://developers.google.com/maps/documentation/javascript/tutorial).
-  * [GoogleMapsNativeAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsNativeAdapter-class.html) (Android, iOS)
-    * Uses Google Maps Android / iOS SDK.
-      Depends on [google_maps_flutter](https://pub.dev/packages/google_maps_flutter).
-      which is the official package maintained by Google. You need to edit your
-      configuration files. See documentation for [google_maps_flutter](https://pub.dev/packages/google_maps_flutter).
-  * [GoogleMapsStaticAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsStaticAdapter-class.html) (all platforms)
-    * Uses [Google Maps Static API](https://developers.google.com/maps/documentation/maps-static/intro).
+## Bing Maps APIs
+### Javascript
+  * [BingMapsJsAdapter](https://pub.dev/documentation/maps/latest/maps/BingMapsJsAdapter-class.html)
+    enables you to use [Bing Maps Javascript API](https://docs.microsoft.com/en-us/bingmaps/v8-web-control/).
+  * The adapter requires an API key, which you can get at [Bing Maps API website](https://docs.microsoft.com/en-us/bingmaps/).
 
-You need to obtain API credentials from Google. You can do that in the
-[Google Maps API website](https://cloud.google.com/maps-platform/).
+### <iframe>
+  * [BingMapsIframeAdapter](https://pub.dev/documentation/maps/latest/maps/BingMapsIframeAdapter-class.html)
+    enables you to uses [Bing Maps Custom Map URLs](https://docs.microsoft.com/en-us/bingmaps/articles/create-a-custom-map-url).
+  * Note that markers and many other features are unsupported by Bing Maps Custom Map URLs.
+  * The adapter does NOT necessarily require an API key.
+
+### Images
+  * [BingMapsStaticAdapter](https://pub.dev/documentation/maps/latest/maps/BingMapsStaticAdapter-class.html)
+    enables you to uses [Bing Maps REST API for static maps](https://docs.microsoft.com/en-us/bingmaps/rest-services/imagery/get-a-static-map).
+  * The adapter requires an API key, which you can get at [Bing Maps API website](https://docs.microsoft.com/en-us/bingmaps/).
+
+## Google Maps APIs
+### Android / iOS
+  * [GoogleMapsNativeAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsNativeAdapter-class.html)
+    enables you to use Google Map Android / iOS SDKs.
+  * You need to obtain API keys and follow documentation by
+    [google_maps_flutter](https://pub.dev/packages/google_maps_flutter).
+
+For Android support, you need to modify `android/app/src/main/AndroidManifest.xml`.
+
+For iOS support, you need to modify:
+  * `ios/Runner/AppDelegate.m` (if your Flutter project uses Objective-C)
+  * `ios/Runner/AppDelegate.swift` (if your Flutter project uses Switf)
+
+You also need to ensure that `ios/Runner/Info.plist` has something like:
+```xml
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>Privacy - Location When In Use Usage Description</key>
+	<string>A description of your privacy policy.</string>
+```
+
+### Javascript
+  * [GoogleMapsJsAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsJsAdapter-class.html)
+    enables you to use [Google Maps Javascript API](https://developers.google.com/maps/documentation/javascript/tutorial).
+  * The adapter requires an API key, which you can get at [Google Maps API website](https://cloud.google.com/maps-platform/).
+
+### <iframe>
+  * [GoogleMapsIframeAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsIframeAdapter-class.html)
+     enables you to use [Google Maps Embed API](https://developers.google.com/maps/documentation/embed/guide).
+  * Note that markers and many other features are unsupported by Google Maps Embed API.
+  * The adapter requires an API key, which you can get at [Google Maps API website](https://cloud.google.com/maps-platform/).
+
+### Images
+  * [GoogleMapsStaticAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsStaticAdapter-class.html)
+    enables you to use [Google Maps Static API](https://developers.google.com/maps/documentation/maps-static/intro).
+  * The adapter requires an API key, which you can get at [Google Maps API website](https://cloud.google.com/maps-platform/).
+
+# Tips
+## Use images when you can
+Images are rendered identically in all platforms and have the best performance.
+
+## Reducing code size
+This package depends on [google_maps_flutter](https://pub.dev/packages/google_maps_flutter).
+If you don't use Google Maps Android / iOS SDKs, you can reduce binary size by excluding the
+pods from your build script.
+

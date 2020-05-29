@@ -1,3 +1,7 @@
+## 0.1.2 - May 29, 2020
+
+* Better documentation and a bit internal refactoring.
+
 ## 0.1.1 - May 28, 2020
 
 * Small fixes.

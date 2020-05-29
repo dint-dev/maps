@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import 'package:collection/collection.dart';
 import 'package:database/database.dart' show GeoPoint;
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
-import 'package:collection/collection.dart';
 
 export 'package:database/database.dart' show GeoPoint;
 

@@ -15,10 +15,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 import 'package:meta/meta.dart';
+import 'package:web_browser/web_browser.dart';
 
 import 'bing_maps_impl_default.dart'
     if (dart.library.html) 'bing_maps_impl_browser.dart';
-import 'internal/iframe.dart';
 import 'internal/static.dart';
 
 /// Enables [MapWidget] to use [Bing Maps Custom Map URLs](https://docs.microsoft.com/en-us/bingmaps/articles/create-a-custom-map-url).
@@ -73,10 +73,9 @@ class BingMapsIframeAdapter extends MapAdapter {
 
     // Other
     sb.write('&typ=d&sty=r&src=SHELL&FORM=MBEDV8');
-    return buildIframeMapWidget(
-      mapWidget: widget,
-      mapAdapterClassName: 'BingMapsIframeApi',
-      src: sb.toString(),
+    return WebBrowser(
+      initialUrl: sb.toString(),
+      javascript: true,
     );
   }
 }

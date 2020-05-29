@@ -21,16 +21,21 @@ import 'internal/platform_specific.dart';
 /// [MapAdapter.defaultInstance].
 ///
 /// ## Available implementations
-///   * [AppleMapsJsAdapter] (browser)
-///   * [AppleMapsNativeAdapter] (iOS)
-///   * [AppleMapsStaticAdapter] (all platforms)
-///   * [BingMapsIframeAdapter] (browser)
-///   * [BingMapsJsAdapter] (browser)
-///   * [BingMapsStaticAdapter] (all platforms)
-///   * [GoogleMapsIframeAdapter] (browser)
-///   * [GoogleMapsJsAdapter] (browser)
-///   * [GoogleMapsNativeAdapter] (Android/iOS)
-///   * [GoogleMapsStaticAdapter] (all platforms)
+/// ### Apple Maps
+///   * iOS? ➔ [AppleMapsNativeAdapter]
+///   * Javascript? ➔ [AppleMapsJsAdapter]
+///   * Static image?  ➔ [AppleMapsStaticAdapter]
+///
+/// ### Bing Maps
+///   * Javascript? ➔ [BingMapsJsAdapter]
+///   * _<iframe>_? ➔ [BingMapsIframeAdapter]
+///   * Static image? ➔ [BingMapsStaticAdapter]
+///
+/// ### Google Maps
+///   * Android/iOS? ➔ [GoogleMapsNativeAdapter]
+///   * Javascript? ➔ [GoogleMapsJsAdapter]
+///   * _<iframe>_? ➔ [GoogleMapsIframeAdapter]
+///   * Static image? ➔ [GoogleMapsStaticAdapter]
 ///
 /// ## Setting default engine
 /// ```

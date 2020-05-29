@@ -15,10 +15,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 import 'package:meta/meta.dart';
+import 'package:web_browser/web_browser.dart';
 
 import 'google_maps_impl_default.dart'
     if (dart.library.html) 'google_maps_impl_browser.dart';
-import 'internal/iframe.dart';
 import 'internal/static.dart';
 
 void _checkApiKey(String apiKey) {
@@ -83,10 +83,9 @@ class GoogleMapsIframeAdapter extends MapAdapter {
     sb.write('&key=');
     sb.write(Uri.encodeQueryComponent(apiKey));
 
-    return buildIframeMapWidget(
-      mapWidget: mapWidget,
-      mapAdapterClassName: 'GoogleMapsIframeApi',
-      src: sb.toString(),
+    return WebBrowser(
+      initialUrl: sb.toString(),
+      javascript: true,
     );
   }
 }
