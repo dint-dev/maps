@@ -14,24 +14,17 @@
 
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
-import 'package:webview_flutter/webview_flutter.dart' as web_view;
+import 'package:web_browser/web_browser.dart';
 
 Widget buildIframeMapWidget({
   @required MapWidget mapWidget,
   @required String src,
   @required String mapAdapterClassName,
+  bool allowFullScreen = true,
 }) {
-  src = src.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
-  return web_view.WebView(
-    initialUrl: Uri.dataFromString(
-      '<html>'
-      '<head><style>html,body,iframe{margin:0;padding:0;border:0;background:pink;}</style></head>'
-      '<body>'
-      '<iframe src="$src" frameborder="0" width="100%" height="100%"></iframe>'
-      '</body></html>',
-      mimeType: 'text/html',
-    ).toString(),
-    javascriptMode: web_view.JavascriptMode.unrestricted,
+  return WebBrowser(
+    initialUrl: src,
+    javascript: true,
+    allowFullscreen: allowFullScreen,
   );
-  //throw StateError('$mapAdapterClassName is only supported in browsers');
 }

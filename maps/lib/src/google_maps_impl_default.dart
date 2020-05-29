@@ -17,7 +17,7 @@ import 'dart:io';
 import 'package:flutter/widgets.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart' as impl;
 import 'package:maps/maps.dart';
-import 'package:webview_flutter/webview_flutter.dart' as web_view;
+import 'package:web_browser/web_browser.dart';
 
 Widget buildGoogleMapsJs(GoogleMapsJsAdapter adapter, MapWidget mapWidget) {
   final sb = StringBuffer();
@@ -42,10 +42,9 @@ Widget buildGoogleMapsJs(GoogleMapsJsAdapter adapter, MapWidget mapWidget) {
     '</html>',
     mimeType: 'text/html',
   ).toString();
-  return web_view.WebView(
+  return WebBrowser(
     initialUrl: html,
-    javascriptMode: web_view.JavascriptMode.unrestricted,
-    navigationDelegate: (request) => web_view.NavigationDecision.prevent,
+    javascript: true,
   );
   throw StateError('GoogleMapsJsAdapter is only supported in browsers');
 }
