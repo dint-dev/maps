@@ -119,7 +119,7 @@ In `ios/Runner/Info.plist`, you should have something like:
     enables you to use [Bing Maps Javascript API](https://docs.microsoft.com/en-us/bingmaps/v8-web-control/).
   * The adapter requires an API key, which you can get at [Bing Maps API website](https://docs.microsoft.com/en-us/bingmaps/).
 
-### <iframe>
+### Iframes
   * [BingMapsIframeAdapter](https://pub.dev/documentation/maps/latest/maps/BingMapsIframeAdapter-class.html)
     enables you to uses [Bing Maps Custom Map URLs](https://docs.microsoft.com/en-us/bingmaps/articles/create-a-custom-map-url).
   * Note that markers and many other features are unsupported by Bing Maps Custom Map URLs.
@@ -156,7 +156,7 @@ You also need to ensure that `ios/Runner/Info.plist` has something like:
     enables you to use [Google Maps Javascript API](https://developers.google.com/maps/documentation/javascript/tutorial).
   * The adapter requires an API key, which you can get at [Google Maps API website](https://cloud.google.com/maps-platform/).
 
-### <iframe>
+### Iframes
   * [GoogleMapsIframeAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsIframeAdapter-class.html)
      enables you to use [Google Maps Embed API](https://developers.google.com/maps/documentation/embed/guide).
   * Note that markers and many other features are unsupported by Google Maps Embed API.
