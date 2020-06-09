@@ -15,7 +15,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:cryptography/cryptography.dart';
+import 'package:cryptography_flutter/cryptography.dart';
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 

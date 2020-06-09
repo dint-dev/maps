@@ -17,6 +17,6 @@ dev_dependencies:
     sdk: flutter
   pedantic: ^1.9.0
 
-dependency_overrides:
-  maps:
-    path: ../maps
+#dependency_overrides:
+#  maps:
+#    path: ../maps

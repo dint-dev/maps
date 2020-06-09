@@ -23,7 +23,5 @@ dependency_overrides:
     path: ../maps
   maps_adapter_google_maps:
     path: ../maps_adapter_google_maps
-  web_browser:
-    path: ../../universal_html/web_browser
 flutter:
   uses-material-design: true

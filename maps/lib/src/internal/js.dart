@@ -17,7 +17,6 @@ import 'dart:html' as html;
 import 'dart:js' as js;
 
 import 'package:flutter/widgets.dart';
-import 'package:web_browser/web_browser.dart';
 
 class LoadedScript {
   final String src;
