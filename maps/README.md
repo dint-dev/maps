@@ -3,11 +3,16 @@
 
 # Overview
 
-Geographic maps for Flutter applications.
+Geographic maps for Flutter applications. Licensed under the [Apache License 2.0](LICENSE).
 
 This package is:
-  * __Cross-platform.__ Browser, Android, iOS, Windows, etc.
-  * __Multi-vendor.__ Supports all major map vendors (Apple, Bing, Google).
+  * __Cross-platform__
+    * Android and iOS
+    * Browsers
+  * __Multi-vendor__
+    * Apple
+    * Bing
+    * Google
 
 This is an early-stage version and lots of things are still missing or broken.
 Pull requests are welcome!
@@ -22,51 +27,10 @@ Pull requests are welcome!
 ## 1.Add dependency
 ```yaml
 dependencies:
-  maps: ^0.1.2
+  maps: ^0.2.0
 ```
 
-## 2.Define configuration
-We recommend that you set a default [MapAdapter](https://pub.dev/documentation/maps/latest/maps/MapAdapter-class.html)
-in the `main` function of your application. This is more convenient than setting a _MapAdapter_ for
-each widget separately.
-
-Your main function should look something like this:
-```dart
-// ...
-import 'package:maps/maps.dart';
-
-void main() {
-  MapAdapter.defaultInstance = const MapAdapter.platformSpecific(
-    android: GoogleMapsNativeAdapter(apiKey:'GOOGLE MAPS API KEY'),
-    browser: BingMapsIframeDapter(),
-    ios: AppleMapsNativeAdapter(),
-    otherwise: GoogleMapsStaticAdapter(apiKey:'GOOGLE MAPS API KEY'),
-  );
-
-  // ...
-
-  runApp(MyApp());
-}
-```
-
-## 3.Use
-### MapWidget
-[MapWidget](https://pub.dev/documentation/maps/latest/maps/MapWidget-class.html) is a Flutter widget that uses the map engine you chose:
-```dart
-// ...
-import 'package:maps/maps.dart';
-
-final widget = MapWidget(
-  size: Size(300, 500),
-  query: 'Paris',
-  markers: [
-    MapMarker(
-      query: 'Eiffel Tower',
-    ),
-  ],
-);
-```
-
+## 2.Use
 ### MapAppLauncher
 [MapAppLauncher](https://pub.dev/documentation/maps/latest/maps/MapAppLAuncher-class.html) launches
 either:
@@ -81,10 +45,58 @@ Future<void> main() async {
   await MapAppLauncher.defaultInstance.launch(query:'Eiffel Tower');
 
   // Use Google Maps
-  await MapAppLauncher.googleMaps.launch(query:'Louvre Museum');
+  await MapAppLauncher.googleMaps.launch(
+    query:'Louvre Museum',
+  );
 }
 ```
 
+### MapWidget
+[MapWidget](https://pub.dev/documentation/maps/latest/maps/MapWidget-class.html) shows a map:
+```dart
+import 'package:flutter/material.dart';
+import 'package:maps/maps.dart';
+
+void main() {
+  runApp(const MaterialApp(
+    home: Scaffold(
+      body: MapWidget(
+        size: Size(300, 500),
+        camera: MapCamera(
+          query: 'Paris',
+        ),
+        markers: [
+          MapMarker(
+            query: 'Eiffel Tower',
+          ),
+        ],
+        // Bing Maps iframe API does not necessarily require API credentials
+        // so we use it in the example.
+        adapter: MapAdapter.platformSpecific(
+          android: GoogleMapsNativeAdapter(),
+          browser: BingMapsIframeAdapter(),
+          ios: AppleNativeAdapter(),
+        ),
+      ),
+    ),
+  ));
+}
+```
+
+Assuming that you have enabled Flutter for Web, you can run:
+```
+flutter run -d chrome
+```
+
+# Recommended configuration file changes
+## iOS
+In `ios/Runner/Info.plist`:
+```xml
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
+	<key>Privacy - Location When In Use Usage Description</key>
+	<string>A description of your privacy policy.</string>
+```
 
 # Supported map providers
 ## Apple Maps APIs
@@ -94,14 +106,7 @@ Future<void> main() async {
     The current implementation depends on the Flutter package [apple_maps_flutter](https://pub.dev/packages/apple_maps_flutter),
     a package by a third-party developer.
   * The adapter doesn't require API credentials.
-
-In `ios/Runner/Info.plist`, you should have something like:
-```xml
-	<key>io.flutter.embedded_views_preview</key>
-	<true/>
-	<key>Privacy - Location When In Use Usage Description</key>
-	<string>A description of your privacy policy.</string>
-```
+  * You need to edit `ios/Runner/Info.plist` (see "recommended configuration file changes").
 
 ### Javascript
   * [AppleMapsJsAdapter](https://pub.dev/documentation/maps/latest/maps/AppleMapsJsAdapter-class.html)
@@ -132,24 +137,10 @@ In `ios/Runner/Info.plist`, you should have something like:
 
 ## Google Maps APIs
 ### Android / iOS
-  * [GoogleMapsNativeAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsNativeAdapter-class.html)
+  * [GoogleMapsNativeAdapter](https://pub.dev/documentation/maps/latest/maps_adapter_google_maps/GoogleMapsNativeAdapter-class.html)
     enables you to use Google Map Android / iOS SDKs.
   * You need to obtain API keys and follow documentation by
     [google_maps_flutter](https://pub.dev/packages/google_maps_flutter).
-
-For Android support, you need to modify `android/app/src/main/AndroidManifest.xml`.
-
-For iOS support, you need to modify:
-  * `ios/Runner/AppDelegate.m` (if your Flutter project uses Objective-C)
-  * `ios/Runner/AppDelegate.swift` (if your Flutter project uses Switf)
-
-You also need to ensure that `ios/Runner/Info.plist` has something like:
-```xml
-	<key>io.flutter.embedded_views_preview</key>
-	<true/>
-	<key>Privacy - Location When In Use Usage Description</key>
-	<string>A description of your privacy policy.</string>
-```
 
 ### Javascript
   * [GoogleMapsJsAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsJsAdapter-class.html)
@@ -169,10 +160,4 @@ You also need to ensure that `ios/Runner/Info.plist` has something like:
 
 # Tips
 ## Use images when you can
-Images are rendered identically in all platforms and have the best performance.
-
-## Reducing code size
-This package depends on [google_maps_flutter](https://pub.dev/packages/google_maps_flutter).
-If you don't use Google Maps Android / iOS SDKs, you can reduce binary size by excluding the
-pods from your build script.
-
+Static images are rendered identically in all platforms and have the best performance.

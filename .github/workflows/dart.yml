@@ -12,10 +12,18 @@ jobs:
     steps:
       - uses: actions/checkout@v1
 
-      - name: Install dependencies
+      - name: Install dependencies (maps)
         run: flutter pub get --suppress-analytics
         working-directory: maps
 
-      - name: Run tests
+      - name: Install dependencies (maps_adapter_google_maps)
+        run: flutter pub get --suppress-analytics
+        working-directory: maps_adapter_google_maps
+
+      - name: Install dependencies (example)
+        run: flutter pub get --suppress-analytics
+        working-directory: example
+
+      - name: Run tests (maps)
         run: flutter test --suppress-analytics
         working-directory: maps

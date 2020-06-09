@@ -27,7 +27,7 @@ void _checkApiKey(String apiKey) {
   }
 }
 
-/// Enables [MapWidget] to use [Google Maps Javascript API](https://developers.google.com/maps/documentation/javascript/tutorial).
+/// Enables [MapWidget] to use [Google Maps Embed API](https://developers.google.com/maps/documentation/embed/guide).
 ///
 /// ## Getting started
 /// You should set [MapAdapter.defaultInstance].
@@ -66,26 +66,36 @@ class GoogleMapsIframeAdapter extends MapAdapter {
     if (query != null) {
       sb.write('?q=');
       sb.write(Uri.encodeQueryComponent(query));
-    } else if (geoPoint != null) {
+    } else if (geoPoint != null && geoPoint.isValid) {
       sb.write('?q=');
-      sb.write(Uri.encodeQueryComponent(geoPoint.latitude.toString()));
+      sb.write(geoPoint.latitude.toString());
       sb.write(',');
-      sb.write(Uri.encodeQueryComponent(geoPoint.longitude.toString()));
+      sb.write(geoPoint.longitude.toString());
     } else {
       throw ArgumentError('Missing query or geoPoint');
     }
 
     // Zoom
-    sb.write('&zoom=');
-    sb.write(mapWidget.camera.zoom);
+    final zoom = mapWidget.camera.zoom;
+    if (zoom != null) {
+      sb.write('&zoom=');
+      sb.write(zoom.clamp(1, 20));
+    }
 
     // API key
     sb.write('&key=');
     sb.write(Uri.encodeQueryComponent(apiKey));
+    final url = sb.toString();
 
     return WebBrowser(
-      initialUrl: sb.toString(),
-      javascript: true,
+      // URL
+      initialUrl: url,
+
+      // No navigation buttons
+      interactionSettings: null,
+
+      // Javascript required
+      javascriptEnabled: true,
     );
   }
 }
@@ -124,31 +134,6 @@ class GoogleMapsJsAdapter extends MapAdapter {
   }
 }
 
-/// Enables [MapWidget] to use [Google Maps Android SDK](https://developers.google.com/maps/documentation/android-sdk/intro)
-/// and [Google Maps iOS SDK](https://developers.google.com/maps/documentation/ios-sdk/intro).
-///
-/// ## Getting started
-/// You need to set API keys by following instructions by
-/// [google_maps_flutter](https://pub.dev/packages/google_maps_flutter) (the
-/// official plugin by Google that this package uses).
-///
-/// In summary:
-///   * For Android, you need to edit `android/app/src/main/AndroidManifest.xml`.
-///   * For iOS, you need to edit one of the following:
-///     * `ios/Runner/AppDelegate.swift` (if your Flutter project uses Swift)
-///     * `ios/Runner/AppDelegate.m` (if your Flutter project uses Objective-C)
-class GoogleMapsNativeAdapter extends MapAdapter {
-  const GoogleMapsNativeAdapter();
-
-  @override
-  String get productName => 'Google Maps';
-
-  @override
-  Widget buildMapWidget(MapWidget mapWidget) {
-    return buildGoogleMapsNative(this, mapWidget);
-  }
-}
-
 /// Enables [MapWidget] to use [Google Maps Static API](https://developers.google.com/maps/documentation/maps-static/intro).
 ///
 /// ## Getting started
@@ -184,17 +169,19 @@ class GoogleMapsStaticAdapter extends MapAdapter {
     sb.write('https://maps.googleapis.com/maps/api/staticmap');
 
     // Size
+    final size = mapWidget.size;
     sb.write('?size=');
-    sb.write(mapWidget.size.width.toInt());
+    sb.write(size.width.toInt());
     sb.write('x');
-    sb.write(mapWidget.size.height.toInt());
+    sb.write(size.height.toInt());
 
     // GeoPoint
-    if (camera.geoPoint != null) {
+    final geoPoint = camera.geoPoint;
+    if (geoPoint != null && geoPoint.isValid) {
       sb.write('&center=');
-      sb.write(Uri.encodeQueryComponent(camera.geoPoint.latitude.toString()));
+      sb.write(geoPoint.latitude.toString());
       sb.write(',');
-      sb.write(Uri.encodeQueryComponent(camera.geoPoint.longitude.toString()));
+      sb.write(geoPoint.longitude.toString());
     }
 
     // Zoom

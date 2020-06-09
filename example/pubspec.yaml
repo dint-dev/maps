@@ -10,12 +10,20 @@ dependencies:
   cupertino_icons: ^0.1.3
   flutter:
     sdk: flutter
-  maps:
-    path: ../maps
+  maps: ^0.2.0
+  maps_adapter_google_maps: ^0.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  pedantic: ^1.9.0
 
+dependency_overrides:
+  maps:
+    path: ../maps
+  maps_adapter_google_maps:
+    path: ../maps_adapter_google_maps
+  web_browser:
+    path: ../../universal_html/web_browser
 flutter:
   uses-material-design: true

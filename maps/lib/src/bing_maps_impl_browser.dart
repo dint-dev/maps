@@ -16,6 +16,7 @@ import 'dart:html' as html;
 
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
+import 'package:web_browser/web_browser.dart';
 
 import 'bing_maps_js_bindings.dart' as api;
 import 'internal/js.dart';
@@ -40,7 +41,7 @@ class _BingMapsJsWidget extends StatefulWidget {
 }
 
 class _BingMapsJsWidgetState extends State<_BingMapsJsWidget> {
-  static int _bingElementId = 0;
+  static int _bingElementNextId = 0;
   LoadedScript _script;
   Widget _builtWidget;
   api.Map _map;
@@ -72,14 +73,20 @@ class _BingMapsJsWidgetState extends State<_BingMapsJsWidget> {
     }
 
     if (_builtWidget == null) {
-      // Create a DIV element with unique ID
-      final htmlElement = html.DivElement()..id = 'bing-map-$_bingElementId';
-      _bingElementId++;
-      _builtWidget = buildHtmlViewFromElement(htmlElement);
+      // Generate ID
+      final id = 'bing-map-$_bingElementNextId';
+      _bingElementNextId++;
 
+      // Create a DIV element
+      final htmlElement = html.DivElement()..id = id;
+
+      // Insert it into the body temporarily
+      html.document.body.append(htmlElement);
+
+      // Call Javascript API
       final camera = widget.widget.camera;
       _map = api.Map(
-        htmlElement.id,
+        id,
         api.MapArgs(
           center: api.Location(
             camera.geoPoint.latitude,
@@ -87,6 +94,12 @@ class _BingMapsJsWidgetState extends State<_BingMapsJsWidget> {
           ),
           zoom: camera.zoom.toInt(),
         ),
+      );
+
+      // Construct a widget that will eventually move the element into the
+      // right location.
+      _builtWidget = WebNode(
+        node: htmlElement,
       );
     }
     return _builtWidget;

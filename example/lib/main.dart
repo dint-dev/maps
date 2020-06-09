@@ -14,6 +14,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:maps/maps.dart';
+import 'package:maps_adapter_google_maps/maps_adapter_google_maps.dart';
 
 import 'API_KEYS.dart';
 
@@ -21,35 +22,18 @@ void main() {
   runApp(_ExampleApp());
 }
 
-class _ExampleApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: Scaffold(
-        body: _ExampleWidget(),
-      ),
-    );
-  }
-}
-
-class _ExampleWidget extends StatefulWidget {
+class _ExampleApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _ExampleWidgetState();
+    return _ExampleAppState();
   }
 }
 
-class _ExampleWidgetState extends State<_ExampleWidget> {
+class _ExampleAppState extends State<_ExampleApp> {
   static const defaultMapAdapter = MapAdapter.platformSpecific(
     ios: appleMapsNative,
     otherwise: bingMapsIframe,
   );
-
   static const AppleMapsJsAdapter appleMapsJs = null;
   static const AppleMapsNativeAdapter appleMapsNative =
       AppleMapsNativeAdapter();
@@ -61,14 +45,97 @@ class _ExampleWidgetState extends State<_ExampleWidget> {
   static const googleMapsJs = GoogleMapsJsAdapter(apiKey: googleApiKey);
   static const googleMapsNative = GoogleMapsNativeAdapter();
   static const googleMapsStatic = GoogleMapsStaticAdapter(apiKey: googleApiKey);
-
+  var _tab = 0;
   MapAdapter selectedAdapter = defaultMapAdapter;
 
+  String query;
   GeoPoint geoPoint = const GeoPoint(48.856613, 2.352222);
+
   double zoom = 10;
 
+  // Paris
   @override
   Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: Scaffold(
+        body: SafeArea(
+          child: buildTab(context, _tab),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          currentIndex: _tab,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.launch),
+              title: Text('MapLauncher'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.map),
+              title: Text('MapWidget'),
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings),
+              title: Text('Settings'),
+            ),
+          ],
+          onTap: (i) {
+            setState(() {
+              _tab = i;
+            });
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildMapLauncherDemo(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        MaterialButton(
+          child: Text('Apple Maps'),
+          onPressed: () {
+            MapAppLauncher.appleMaps.launch(
+              camera: MapCamera(
+                query: query,
+                geoPoint: geoPoint,
+              ),
+            );
+          },
+        ),
+        MaterialButton(
+          child: Text('Bing Maps'),
+          onPressed: () {
+            MapAppLauncher.bingMaps.launch(
+              camera: MapCamera(
+                query: query,
+                geoPoint: geoPoint,
+              ),
+            );
+          },
+        ),
+        MaterialButton(
+          child: Text('Google Maps'),
+          onPressed: () {
+            MapAppLauncher.googleMaps.launch(
+              camera: MapCamera(
+                query: query,
+                geoPoint: geoPoint,
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget buildMapWidgetDemo(BuildContext context) {
     final radioButtonRows = <Row>[];
     void f(String name, MapAdapter value) {
       if (value == null) {
@@ -85,7 +152,9 @@ class _ExampleWidgetState extends State<_ExampleWidget> {
               });
             },
           ),
-          Text(name),
+          Text(
+            name,
+          ),
         ],
       ));
     }
@@ -128,5 +197,51 @@ class _ExampleWidgetState extends State<_ExampleWidget> {
         ...radioButtonRows,
       ],
     );
+  }
+
+  Widget buildSettings(BuildContext context) {
+    final queryController = TextEditingController();
+    queryController.text = query;
+    return Column(
+      children: <Widget>[
+        Row(children: [
+          Text('Query:'),
+          MaterialButton(
+            child: Text('None'),
+            onPressed: () {
+              setState(() {
+                query = '';
+              });
+            },
+          ),
+          MaterialButton(
+            child: Text('Paris, France'),
+            onPressed: () {
+              setState(() {
+                query = 'Paris, France';
+              });
+            },
+          ),
+        ]),
+        TextField(
+          controller: queryController,
+          maxLength: 30,
+          onChanged: (newValue) {
+            query = newValue;
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget buildTab(BuildContext context, int i) {
+    switch (i) {
+      case 0:
+        return buildMapLauncherDemo(context);
+      case 1:
+        return buildMapWidgetDemo(context);
+      default:
+        return buildSettings(context);
+    }
   }
 }

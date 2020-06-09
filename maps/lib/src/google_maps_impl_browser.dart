@@ -16,6 +16,7 @@ import 'dart:html' as html;
 
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
+import 'package:web_browser/web_browser.dart';
 
 import 'google_maps_js_bindings.dart' as google_maps;
 import 'internal/js.dart';
@@ -25,11 +26,6 @@ Widget buildGoogleMapsJs(GoogleMapsJsAdapter adapter, MapWidget mapWidget) {
     apiKey: adapter.apiKey,
     mapWidget: mapWidget,
   );
-}
-
-Widget buildGoogleMapsNative(
-    GoogleMapsNativeAdapter adapter, MapWidget widget) {
-  throw StateError('GoogleMapsNativeAdapter is only supported in Android/iOS');
 }
 
 class _GoogleMapsJs extends StatefulWidget {
@@ -97,7 +93,7 @@ class _GoogleMapsJsState extends State<_GoogleMapsJs> {
           google_maps.MapArgs(
             center: google_maps.LatLng(lat: 0.0, lng: 0.0),
           ));
-      _widget = buildHtmlViewFromElement(element);
+      _widget = WebNode(node: element);
     }
 
     return _widget;

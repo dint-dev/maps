@@ -19,10 +19,6 @@ import 'dart:js' as js;
 import 'package:flutter/widgets.dart';
 import 'package:web_browser/web_browser.dart';
 
-Widget buildHtmlViewFromElement(html.Element element) {
-  return WebNode(element);
-}
-
 class LoadedScript {
   final String src;
   final String readyFunctionName;

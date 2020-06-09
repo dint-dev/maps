@@ -132,24 +132,7 @@ In `ios/Runner/Info.plist`, you should have something like:
 
 ## Google Maps APIs
 ### Android / iOS
-  * [GoogleMapsNativeAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsNativeAdapter-class.html)
-    enables you to use Google Map Android / iOS SDKs.
-  * You need to obtain API keys and follow documentation by
-    [google_maps_flutter](https://pub.dev/packages/google_maps_flutter).
-
-For Android support, you need to modify `android/app/src/main/AndroidManifest.xml`.
-
-For iOS support, you need to modify:
-  * `ios/Runner/AppDelegate.m` (if your Flutter project uses Objective-C)
-  * `ios/Runner/AppDelegate.swift` (if your Flutter project uses Switf)
-
-You also need to ensure that `ios/Runner/Info.plist` has something like:
-```xml
-	<key>io.flutter.embedded_views_preview</key>
-	<true/>
-	<key>Privacy - Location When In Use Usage Description</key>
-	<string>A description of your privacy policy.</string>
-```
+Use the package [maps_adapter_google_maps](https://pub.dev/packages/maps_adapter_google_maps).
 
 ### Javascript
   * [GoogleMapsJsAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsJsAdapter-class.html)

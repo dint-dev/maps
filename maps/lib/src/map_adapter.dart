@@ -24,18 +24,18 @@ import 'internal/platform_specific.dart';
 /// ### Apple Maps
 ///   * iOS? ➔ [AppleMapsNativeAdapter]
 ///   * Javascript? ➔ [AppleMapsJsAdapter]
-///   * Static image?  ➔ [AppleMapsStaticAdapter]
+///   * Image?  ➔ [AppleMapsStaticAdapter]
 ///
 /// ### Bing Maps
 ///   * Javascript? ➔ [BingMapsJsAdapter]
-///   * _<iframe>_? ➔ [BingMapsIframeAdapter]
-///   * Static image? ➔ [BingMapsStaticAdapter]
+///   * Iframe? ➔ [BingMapsIframeAdapter]
+///   * Image? ➔ [BingMapsStaticAdapter]
 ///
 /// ### Google Maps
 ///   * Android/iOS? ➔ [GoogleMapsNativeAdapter]
 ///   * Javascript? ➔ [GoogleMapsJsAdapter]
-///   * _<iframe>_? ➔ [GoogleMapsIframeAdapter]
-///   * Static image? ➔ [GoogleMapsStaticAdapter]
+///   * Iframe? ➔ [GoogleMapsIframeAdapter]
+///   * Image? ➔ [GoogleMapsStaticAdapter]
 ///
 /// ## Setting default engine
 /// ```

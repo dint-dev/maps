@@ -174,7 +174,9 @@ class MapWidget extends StatefulWidget {
         assert(camera != null),
         assert(markers != null),
         assert(userLocationEnabled != null),
-        assert(userLocationButtonEnabled != null);
+        assert(userLocationButtonEnabled != null),
+        assert(zoomControlsEnabled != null),
+        assert(zoomGesturesEnabled != null);
 
   @override
   State<StatefulWidget> createState() {

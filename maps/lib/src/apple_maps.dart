@@ -247,19 +247,21 @@ class _AppleMapsStaticWidgetState extends State<_AppleMapsStaticWidget> {
     sb.write(mapWidget.size.height.toInt());
 
     // Query or GeoPoint
-    if (camera.geoPoint != null) {
+    final query = camera.query ?? '';
+    final geoPoint = camera.geoPoint;
+    if (geoPoint != null) {
       sb.write('&center=');
-      sb.write(Uri.encodeQueryComponent(camera.geoPoint.latitude.toString()));
+      sb.write(geoPoint.latitude);
       sb.write(',');
-      sb.write(Uri.encodeQueryComponent(camera.geoPoint.longitude.toString()));
-    } else if (camera.query != null) {
+      sb.write(geoPoint.longitude);
+    } else if (query.isNotEmpty) {
       sb.write('&center=');
-      sb.write(Uri.encodeQueryComponent(camera.query));
+      sb.write(Uri.encodeQueryComponent(query));
     }
 
     // Zoom
     sb.write('&z=');
-    sb.write(camera.zoom.toInt().clamp(3, 20));
+    sb.write(camera.zoom.clamp(3, 20));
 
     // Sign the request
     final src = sb.toString();

@@ -57,16 +57,22 @@ class _AppleMapApp extends MapAppLauncher {
     sb.write('http://maps.apple.com/?');
 
     // Camera must have either query or geoPoint
-    final query = camera.query;
+    final query = camera.query ?? '';
     final geoPoint = camera.geoPoint;
-    if (query != null) {
+    if (query.isNotEmpty) {
       sb.write('?q=');
       sb.write(Uri.encodeQueryComponent(query));
-    } else if (geoPoint != null) {
+      if (geoPoint != null && geoPoint.isValid) {
+        sb.write('?sll=');
+        sb.write(geoPoint.latitude.toString());
+        sb.write(',');
+        sb.write(geoPoint.longitude.toString());
+      }
+    } else if (geoPoint != null && geoPoint.isValid) {
       sb.write('?ll=');
-      sb.write(Uri.encodeQueryComponent(geoPoint.latitude.toString()));
+      sb.write(geoPoint.latitude.toString());
       sb.write(',');
-      sb.write(Uri.encodeQueryComponent(geoPoint.longitude.toString()));
+      sb.write(geoPoint.longitude.toString());
     } else {
       return null;
     }
@@ -79,6 +85,7 @@ class _AppleMapApp extends MapAppLauncher {
   }
 }
 
+/// Bing Maps launcher.
 class _BingMapsApp extends MapAppLauncher {
   const _BingMapsApp();
 
@@ -88,28 +95,29 @@ class _BingMapsApp extends MapAppLauncher {
 
     final sb = StringBuffer();
     sb.write('https://www.bing.com/maps');
-    final query = camera.query;
+    final query = camera.query ?? '';
     final geoPoint = camera.geoPoint;
-    if (query != null) {
+    if (query.isNotEmpty) {
       sb.write('?where1=');
       sb.write(Uri.encodeQueryComponent(query));
-    } else if (geoPoint != null) {
+    } else if (geoPoint != null && geoPoint.isValid) {
       sb.write('?cp=');
-      sb.write(Uri.encodeQueryComponent(geoPoint.latitude.toString()));
+      sb.write(geoPoint.latitude.toString());
       sb.write('~');
-      sb.write(Uri.encodeQueryComponent(geoPoint.longitude.toString()));
+      sb.write(geoPoint.longitude.toString());
     } else {
       return null;
     }
 
     // Zoom
     sb.write('&lvl=');
-    sb.write(Uri.encodeQueryComponent(camera.zoom.toString()));
+    sb.write(camera.zoom.toString());
 
     return sb.toString();
   }
 }
 
+/// Google Maps launcher.
 class _GoogleMapsApp extends MapAppLauncher {
   const _GoogleMapsApp();
 
@@ -118,27 +126,30 @@ class _GoogleMapsApp extends MapAppLauncher {
     ArgumentError.checkNotNull(camera, 'camera');
 
     final sb = StringBuffer();
-    sb.write('https://www.google.com/maps/search/?api=1');
 
     // Camera must have either query or geoPoint
-    final query = camera.query;
+    final query = camera.query ?? '';
     final geoPoint = camera.geoPoint;
-    if (query != null) {
-      sb.write('?query=');
+    if (query.isNotEmpty) {
+      sb.write('https://www.google.com/maps/search/?api=1');
+      sb.write('&query=');
       sb.write(Uri.encodeQueryComponent(query));
-    } else if (geoPoint != null) {
-      sb.write('?map_action=map');
+      return sb.toString();
+    }
+    sb.write('https://www.google.com/maps/@?api=1&map_action=map');
+    if (geoPoint != null && geoPoint.isValid) {
       sb.write('&center=');
-      sb.write(Uri.encodeQueryComponent(geoPoint.latitude.toString()));
+      sb.write(geoPoint.latitude.toString());
       sb.write(',');
-      sb.write(Uri.encodeQueryComponent(geoPoint.longitude.toString()));
-    } else {
-      return null;
+      sb.write(geoPoint.longitude.toString());
     }
 
     // Zoom
-    sb.write('&zoom=');
-    sb.write(Uri.encodeQueryComponent(camera.zoom.toString()));
+    final zoom = camera.zoom;
+    if (zoom != null) {
+      sb.write('&zoom=');
+      sb.write(camera.zoom.toString());
+    }
 
     return sb.toString();
   }

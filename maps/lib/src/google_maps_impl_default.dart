@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:io';
-
 import 'package:flutter/widgets.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart' as impl;
 import 'package:maps/maps.dart';
 import 'package:web_browser/web_browser.dart';
 
@@ -25,63 +22,29 @@ Widget buildGoogleMapsJs(GoogleMapsJsAdapter adapter, MapWidget mapWidget) {
   sb.write(Uri.encodeQueryComponent(adapter.apiKey));
   sb.write('&callback=initMap');
   final src = sb.toString().replaceAll('&', '&amp;').replaceAll('"', '&quot;');
-  final script =
-      'function initMap() { new google.maps.Map(document.getElementById("map")); }'
-          .replaceAll('&', '&amp;');
-  final html = Uri.dataFromString(
-    '<!DOCTYPE html>'
-    '<html>'
-    '<head>'
-    '<style>html,body{margin:0;padding:0;border:0;}#map{width:100%;}</style>'
-    '</head>'
-    '<body>'
-    '<div id="map"></div>'
-    '<script type="text/javascript">$script</script>'
-    '<script src="$src" async defer></script>'
-    '</body>'
-    '</html>',
-    mimeType: 'text/html',
-  ).toString();
+
+  final scriptSb = StringBuffer();
+  scriptSb.writeln('function initMap() {');
+  scriptSb.writeln('  new google.maps.Map(document.getElementById("map")); }');
+  scriptSb.writeln('}');
+  final script = scriptSb.toString().replaceAll('&', '&amp;');
+
+  final html = '<!DOCTYPE html>'
+      '<html>'
+      '<head>'
+      '<style>html,body{margin:0;padding:0;border:0;}#map{width:100%;}</style>'
+      '</head>'
+      '<body>'
+      '<div id="map"></div>'
+      '<script type="text/javascript">$script</script>'
+      '<script src="$src" async defer></script>'
+      '</body>'
+      '</html>';
+
+  final url = Uri.dataFromString(html, mimeType: 'text/html').toString();
+
   return WebBrowser(
-    initialUrl: html,
-    javascript: true,
+    initialUrl: url,
+    javascriptEnabled: true,
   );
-  throw StateError('GoogleMapsJsAdapter is only supported in browsers');
-}
-
-Widget buildGoogleMapsNative(
-    GoogleMapsNativeAdapter adapter, MapWidget widget) {
-  if (!(Platform.isAndroid || Platform.isIOS)) {
-    throw StateError(
-      'GoogleMapsNativeAdapter is only supported in Android/iOS',
-    );
-  }
-  return impl.GoogleMap(
-    initialCameraPosition: _cameraPositionFrom(widget.camera),
-    myLocationEnabled: widget.userLocationEnabled,
-    myLocationButtonEnabled: widget.userLocationButtonEnabled,
-    zoomControlsEnabled: widget.zoomControlsEnabled,
-    zoomGesturesEnabled: widget.zoomGesturesEnabled,
-    markers: widget.markers.map((marker) {
-      return impl.Marker(
-        markerId: impl.MarkerId(
-          marker.query ?? marker.geoPoint?.toString(),
-        ),
-      );
-    }).toSet(),
-  );
-}
-
-impl.CameraPosition _cameraPositionFrom(MapCamera value) {
-  return impl.CameraPosition(
-    target: _latLngFrom(value.geoPoint ?? GeoPoint.zero),
-    zoom: value.zoom,
-  );
-}
-
-impl.LatLng _latLngFrom(GeoPoint value) {
-  if (value == null) {
-    return null;
-  }
-  return impl.LatLng(value.latitude, value.longitude);
 }

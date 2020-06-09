@@ -57,15 +57,24 @@ class BingMapsIframeAdapter extends MapAdapter {
 
     // Size
     sb.write('?h=');
-    sb.write(height);
+    sb.write(height.toInt());
     sb.write('&w=');
-    sb.write(width);
+    sb.write(width.toInt());
 
-    // GeoPoint
-    sb.write('&cp=');
-    sb.write(camera.geoPoint.latitude.toString());
-    sb.write('~');
-    sb.write(camera.geoPoint.longitude.toString());
+    // Location
+    final geoPoint = camera.geoPoint;
+    final query = camera.query;
+    if (geoPoint != null && geoPoint.isValid) {
+      // GeoPoint
+      sb.write('&cp=');
+      sb.write(geoPoint.latitude);
+      sb.write('~');
+      sb.write(geoPoint.longitude);
+    } else if (query != null) {
+      // Query
+      sb.write('&where1=');
+      sb.write(Uri.encodeQueryComponent(query));
+    }
 
     // Zoom
     sb.write('&lvl=');
@@ -73,9 +82,16 @@ class BingMapsIframeAdapter extends MapAdapter {
 
     // Other
     sb.write('&typ=d&sty=r&src=SHELL&FORM=MBEDV8');
+
     return WebBrowser(
+      // URL
       initialUrl: sb.toString(),
-      javascript: true,
+
+      // No navigation buttons
+      interactionSettings: null,
+
+      // Javascript required
+      javascriptEnabled: true,
     );
   }
 }
@@ -162,25 +178,31 @@ class BingMapsStaticAdapter extends MapAdapter {
     );
 
     // Size
+    final size = widget.size;
     sb.write('?size=');
-    sb.write(widget.size.width.toInt());
+    sb.write(size.width.toInt());
     sb.write(',');
-    sb.write(widget.size.height.toInt());
+    sb.write(size.height.toInt());
 
-    // Query o GeoPoint
-    if (camera.geoPoint != null) {
+    // Query or GeoPoint
+    final query = camera.query ?? '';
+    final geoPoint = camera.geoPoint;
+    if (geoPoint != null && geoPoint.isValid) {
       sb.write('&centerPoint=');
-      sb.write(Uri.encodeQueryComponent(camera.geoPoint.latitude.toString()));
+      sb.write(geoPoint.latitude);
       sb.write(',');
-      sb.write(Uri.encodeQueryComponent(camera.geoPoint.longitude.toString()));
-    } else if (camera.query != null) {
+      sb.write(geoPoint.longitude);
+    } else if (query.isNotEmpty) {
       sb.write('&query=');
-      sb.write(Uri.encodeQueryComponent(camera.query));
+      sb.write(Uri.encodeQueryComponent(query));
     }
 
     // Zoom
-    sb.write('&lvl=');
-    sb.write(camera.zoom.toInt().clamp(0, 20));
+    final zoom = camera.zoom;
+    if (zoom != null) {
+      sb.write('&lvl=');
+      sb.write(zoom.toInt().clamp(0, 20));
+    }
 
     // API key
     sb.write('&key=');
