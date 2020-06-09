@@ -3,19 +3,11 @@
 
 # Overview
 
-Geographic maps for Flutter applications. Licensed under the [Apache License 2.0](LICENSE).
+Cross-platform geographic maps for Flutter applications.
 
-This package is:
-  * __Cross-platform__
-    * Android and iOS
-    * Browsers
-  * __Multi-vendor__
-    * Apple
-    * Bing
-    * Google
+__This is an early-stage version and lots of things are still missing or broken.__
 
-This is an early-stage version and lots of things are still missing or broken.
-Pull requests are welcome!
+Pull requests are welcome! The package is licensed under the [Apache License 2.0](LICENSE).
 
 ## Links
   * [Github project](https://github.com/dint-dev/maps)
@@ -25,28 +17,40 @@ Pull requests are welcome!
 
 # Getting started
 ## 1.Add dependency
+In _pubspec.yaml_:
 ```yaml
 dependencies:
-  maps: ^0.2.0
+  maps: ^0.2.1
+```
+
+Add the following in `ios/Runner/Info.plist`:
+```xml
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 ```
 
 ## 2.Use
 ### MapAppLauncher
-[MapAppLauncher](https://pub.dev/documentation/maps/latest/maps/MapAppLAuncher-class.html) launches
-either:
-  * A map website (such as Google Maps website)
-  * A map application in the device (such as Google Maps for Android/iOS)
+[MapAppLauncher](https://pub.dev/documentation/maps/latest/maps/MapAppLauncher-class.html) launches
+map applications.
+
+The following implementations are available:
+  * [MapAppLauncher.appleMaps](https://pub.dev/documentation/maps/latest/maps/MapAppLauncher/appleMaps-constant.html)
+    launches Apple Maps (native application - the user must have an iOS device)
+  * [MapAppLauncher.bingMaps](https://pub.dev/documentation/maps/latest/maps/MapAppLauncher/appleMaps-constant.html)
+    launches Bing Maps (website)
+  * [MapAppLauncher.googleMaps](https://pub.dev/documentation/maps/latest/maps/MapAppLauncher/appleMaps-constant.html)
+    launches Google Maps (website or native application)
+  * [MapAppLauncher.defaultInstance](https://pub.dev/documentation/maps/latest/maps/MapAppLauncher/appleMaps-constant.html)
+    launches one of the above.
 
 ```dart
 import 'package:maps/maps.dart';
 
 Future<void> main() async {
-  // Use default app
-  await MapAppLauncher.defaultInstance.launch(query:'Eiffel Tower');
-
-  // Use Google Maps
-  await MapAppLauncher.googleMaps.launch(
-    query:'Louvre Museum',
+  // Use default map app
+  await MapAppLauncher.defaultInstance.launch(
+    query: 'Paris'
   );
 }
 ```
@@ -70,12 +74,12 @@ void main() {
             query: 'Eiffel Tower',
           ),
         ],
-        // Bing Maps iframe API does not necessarily require API credentials
-        // so we use it in the example.
         adapter: MapAdapter.platformSpecific(
-          android: GoogleMapsNativeAdapter(),
-          browser: BingMapsIframeAdapter(),
           ios: AppleNativeAdapter(),
+
+          // Bing Maps iframe API does not necessarily require API credentials
+          // so we use it in the example.
+          otherwise: BingMapsIframeAdapter(),
         ),
       ),
     ),
@@ -86,16 +90,6 @@ void main() {
 Assuming that you have enabled Flutter for Web, you can run:
 ```
 flutter run -d chrome
-```
-
-# Recommended configuration file changes
-## iOS
-In `ios/Runner/Info.plist`:
-```xml
-	<key>io.flutter.embedded_views_preview</key>
-	<true/>
-	<key>Privacy - Location When In Use Usage Description</key>
-	<string>A description of your privacy policy.</string>
 ```
 
 # Supported map providers
@@ -136,11 +130,8 @@ In `ios/Runner/Info.plist`:
   * The adapter requires an API key, which you can get at [Bing Maps API website](https://docs.microsoft.com/en-us/bingmaps/).
 
 ## Google Maps APIs
-### Android / iOS
-  * [GoogleMapsNativeAdapter](https://pub.dev/documentation/maps/latest/maps_adapter_google_maps/GoogleMapsNativeAdapter-class.html)
-    enables you to use Google Map Android / iOS SDKs.
-  * You need to obtain API keys and follow documentation by
-    [google_maps_flutter](https://pub.dev/packages/google_maps_flutter).
+### Android / iOS native SDK
+Use the separate package [maps_adapter_google_maps](https://pub.dev/packages/maps_adapter_google_maps).
 
 ### Javascript
   * [GoogleMapsJsAdapter](https://pub.dev/documentation/maps/latest/maps/GoogleMapsJsAdapter-class.html)
@@ -158,6 +149,6 @@ In `ios/Runner/Info.plist`:
     enables you to use [Google Maps Static API](https://developers.google.com/maps/documentation/maps-static/intro).
   * The adapter requires an API key, which you can get at [Google Maps API website](https://cloud.google.com/maps-platform/).
 
-# Tips
-## Use images when you can
-Static images are rendered identically in all platforms and have the best performance.
+# Contributing?
+  * Pull requests are welcome.
+  * Please test your changes manually using the "example" application in the repository.

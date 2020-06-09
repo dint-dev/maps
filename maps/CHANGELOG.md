@@ -1,3 +1,7 @@
+## 0.2.1
+
+* Improves documentation.
+
 ## 0.2.0
 
 * Moved `GoogleMapsNativeAdapter` to a separate package to eliminate dependency on Google Maps
