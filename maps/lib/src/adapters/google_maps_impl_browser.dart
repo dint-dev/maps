@@ -18,10 +18,27 @@ import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 import 'package:web_browser/web_browser.dart';
 
+import 'internal.dart';
 import 'google_maps_js_bindings.dart' as google_maps;
-import 'internal/js.dart';
 
-Widget buildGoogleMapsJs(GoogleMapsJsAdapter adapter, MapWidget mapWidget) {
+Widget buildGoogleMapsIframe(String url, Size size) {
+  return WebBrowser(
+    // URL
+    initialUrl: url,
+
+    // No navigation buttons
+    interactionSettings: null,
+
+    // Javascript required
+    javascriptEnabled: true,
+  );
+}
+
+Widget buildGoogleMapsJs(
+  GoogleMapsJsAdapter adapter,
+  MapWidget mapWidget,
+  Size size,
+) {
   return _GoogleMapsJs(
     apiKey: adapter.apiKey,
     mapWidget: mapWidget,

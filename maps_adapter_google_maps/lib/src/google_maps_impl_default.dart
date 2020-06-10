@@ -23,32 +23,41 @@ import 'google_maps.dart';
 Widget buildGoogleMapsNative(
   GoogleMapsNativeAdapter adapter,
   MapWidget widget,
+  Size size,
 ) {
   if (!(Platform.isAndroid || Platform.isIOS)) {
     throw StateError(
       'GoogleMapsNativeAdapter is only supported in Android/iOS',
     );
   }
+
+  final markers = widget.markers ?? <MapMarker>[];
+  final implMarkers = markers.map(_markerFrom).toList();
+
   return impl.GoogleMap(
-    initialCameraPosition: _cameraPositionFrom(widget.camera),
+    initialCameraPosition: _cameraPositionFrom(widget.location),
     myLocationEnabled: widget.userLocationEnabled,
     myLocationButtonEnabled: widget.userLocationButtonEnabled,
     zoomControlsEnabled: widget.zoomControlsEnabled,
     zoomGesturesEnabled: widget.zoomGesturesEnabled,
-    markers: widget.markers.map((marker) {
-      return impl.Marker(
-        markerId: impl.MarkerId(
-          marker.query ?? marker.geoPoint?.toString(),
-        ),
-      );
-    }).toSet(),
+    markers: widget.markers.map(_markerFrom).toSet(),
   );
 }
 
-impl.CameraPosition _cameraPositionFrom(MapCamera value) {
+impl.CameraPosition _cameraPositionFrom(MapLocation value) {
   return impl.CameraPosition(
     target: _latLngFrom(value.geoPoint ?? GeoPoint.zero),
     zoom: value.zoom,
+  );
+}
+
+impl.InfoWindow _infoWindowFrom(MapMarkerDetails details) {
+  if (details == null) {
+    return null;
+  }
+  return impl.InfoWindow(
+    title: details.title,
+    snippet: details.snippet,
   );
 }
 
@@ -57,4 +66,13 @@ impl.LatLng _latLngFrom(GeoPoint value) {
     return null;
   }
   return impl.LatLng(value.latitude, value.longitude);
+}
+
+impl.Marker _markerFrom(MapMarker value) {
+  return impl.Marker(
+    markerId: impl.MarkerId(value.id),
+    position: _latLngFrom(value.geoPoint),
+    infoWindow: _infoWindowFrom(value.details),
+    onTap: value.onTap,
+  );
 }

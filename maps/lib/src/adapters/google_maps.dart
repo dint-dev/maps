@@ -15,11 +15,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 import 'package:meta/meta.dart';
-import 'package:web_browser/web_browser.dart';
 
 import 'google_maps_impl_default.dart'
     if (dart.library.html) 'google_maps_impl_browser.dart';
-import 'internal/static.dart';
 
 void _checkApiKey(String apiKey) {
   if (apiKey == null) {
@@ -53,33 +51,34 @@ class GoogleMapsIframeAdapter extends MapAdapter {
   String get productName => 'Google Maps';
 
   @override
-  Widget buildMapWidget(MapWidget mapWidget) {
+  Widget buildMapWidget(MapWidget mapWidget, Size size) {
     _checkApiKey(apiKey);
 
     // Base URL
     final sb = StringBuffer();
     sb.write('https://www.google.com/maps/embed/v1/search');
 
-    // Query or GeoPoint
-    final query = mapWidget.camera.query;
-    final geoPoint = mapWidget.camera.geoPoint;
-    if (query != null) {
-      sb.write('?q=');
-      sb.write(Uri.encodeQueryComponent(query));
-    } else if (geoPoint != null && geoPoint.isValid) {
+    // Location
+    final location = mapWidget.location;
+    final query = location.query;
+    final geoPoint = location.geoPoint;
+    if (geoPoint != null && geoPoint.isValid) {
       sb.write('?q=');
       sb.write(geoPoint.latitude.toString());
       sb.write(',');
       sb.write(geoPoint.longitude.toString());
+    } else if (query != null) {
+      sb.write('?q=');
+      sb.write(Uri.encodeQueryComponent(query));
     } else {
       throw ArgumentError('Missing query or geoPoint');
     }
 
     // Zoom
-    final zoom = mapWidget.camera.zoom;
+    final zoom = location.zoom ?? 11;
     if (zoom != null) {
       sb.write('&zoom=');
-      sb.write(zoom.clamp(1, 20));
+      sb.write(zoom.toInt().clamp(1, 20));
     }
 
     // API key
@@ -87,16 +86,7 @@ class GoogleMapsIframeAdapter extends MapAdapter {
     sb.write(Uri.encodeQueryComponent(apiKey));
     final url = sb.toString();
 
-    return WebBrowser(
-      // URL
-      initialUrl: url,
-
-      // No navigation buttons
-      interactionSettings: null,
-
-      // Javascript required
-      javascriptEnabled: true,
-    );
+    return buildGoogleMapsIframe(url, size);
   }
 }
 
@@ -125,12 +115,9 @@ class GoogleMapsJsAdapter extends MapAdapter {
   String get productName => 'Google Maps';
 
   @override
-  Widget buildMapWidget(MapWidget mapWidget) {
+  Widget buildMapWidget(MapWidget mapWidget, Size size) {
     _checkApiKey(apiKey);
-    return buildGoogleMapsJs(
-      this,
-      mapWidget,
-    );
+    return buildGoogleMapsJs(this, mapWidget, size);
   }
 }
 
@@ -160,23 +147,22 @@ class GoogleMapsStaticAdapter extends MapAdapter {
   String get productName => 'Google Maps';
 
   @override
-  Widget buildMapWidget(MapWidget mapWidget) {
+  Widget buildMapWidget(MapWidget mapWidget, Size size) {
     _checkApiKey(apiKey);
-    final camera = mapWidget.camera;
 
     // Base URL
     final sb = StringBuffer();
     sb.write('https://maps.googleapis.com/maps/api/staticmap');
 
     // Size
-    final size = mapWidget.size;
     sb.write('?size=');
     sb.write(size.width.toInt());
     sb.write('x');
     sb.write(size.height.toInt());
 
-    // GeoPoint
-    final geoPoint = camera.geoPoint;
+    // Location
+    final location = mapWidget.location;
+    final geoPoint = location.geoPoint;
     if (geoPoint != null && geoPoint.isValid) {
       sb.write('&center=');
       sb.write(geoPoint.latitude.toString());
@@ -185,7 +171,7 @@ class GoogleMapsStaticAdapter extends MapAdapter {
     }
 
     // Zoom
-    final zoom = camera.zoom;
+    final zoom = location.zoom;
     if (zoom != null) {
       sb.write('&zoom=');
       sb.write(zoom.toInt().clamp(1, 20));
@@ -194,10 +180,8 @@ class GoogleMapsStaticAdapter extends MapAdapter {
     // API key
     sb.write('&key=');
     sb.write(Uri.encodeQueryComponent(apiKey));
-    return buildStaticMapWidget(
-      mapWidget: mapWidget,
-      mapAdapterClassName: 'GoogleMapsStaticApi',
-      src: sb.toString(),
-    );
+    final url = sb.toString();
+
+    return Image.network(url, width: size.width, height: size.height);
   }
 }

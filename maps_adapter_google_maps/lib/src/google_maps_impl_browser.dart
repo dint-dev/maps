@@ -20,6 +20,9 @@ import 'google_maps.dart';
 Widget buildGoogleMapsNative(
   GoogleMapsNativeAdapter adapter,
   MapWidget widget,
+  Size size,
 ) {
-  throw StateError('GoogleMapsNativeAdapter is only supported in Android/iOS');
+  throw StateError(
+    'GoogleMapsNativeAdapter is only supported in Android/iOS',
+  );
 }

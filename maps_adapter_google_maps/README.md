@@ -9,7 +9,7 @@ This is a Google Maps Android/iOS SDK adapter for the package [maps](https://pub
 In _pubspec.yaml_, you should have:
 ```yaml
 dependencies:
-  maps_adapter_google_maps: ^0.1.0
+  maps_adapter_google_maps: ^0.2.0
 ```
 
 ## 2.Modify configuration files

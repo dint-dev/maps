@@ -13,114 +13,53 @@
 // limitations under the License.
 
 import 'package:collection/collection.dart';
-import 'package:database/database.dart' show GeoPoint;
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:maps/maps.dart';
 
 export 'package:database/database.dart' show GeoPoint;
 
-class MapCamera {
-  /// Optional query string such as name of place ("Eiffel Tower") or address.
-  /// Not supported by all engines.
-  ///
-  /// Either [query] or [geoPoint] must be non-null.
-  final String query;
-
-  /// Optional geographical point.
-  ///
-  /// Either [query] or [geoPoint] must be non-null.
-  final GeoPoint geoPoint;
-
-  /// Zoom level.
-  final double zoom;
-
-  const MapCamera({
-    this.query,
-    this.geoPoint,
-    this.zoom = 10,
-  })  : assert(query != null || geoPoint != null),
-        assert(zoom != null);
-
-  @override
-  int get hashCode => query.hashCode ^ geoPoint.hashCode ^ zoom.hashCode;
-
-  @override
-  bool operator ==(other) =>
-      other is MapCamera &&
-      query == other.query &&
-      geoPoint == other.geoPoint &&
-      zoom == other.zoom;
-}
-
-/// A marker in a map.
-///
-/// ## Example
-/// ```
-/// final marker = MapMarker(
-///   geoPoint: GeoPoint(0.0, 0.0),
-///   label: 'London',
-/// );
-/// ```
-class MapMarker {
-  /// Optional query string such as name of place ("Tower Of London") or address.
-  final String query;
-
-  /// Optional geographical point.
-  final GeoPoint geoPoint;
-
-  /// Optional title of the marker.
-  final String title;
-
-  const MapMarker({
-    this.query,
-    this.geoPoint,
-    this.title,
-  });
-
-  @override
-  int get hashCode => query.hashCode ^ geoPoint.hashCode ^ title.hashCode;
-
-  @override
-  bool operator ==(other) =>
-      other is MapMarker &&
-      query == other.query &&
-      geoPoint == other.geoPoint &&
-      title == other.title;
-}
-
+/// Describes type of map.
 enum MapType {
+  /// Normal map.
   normal,
+
+  /// Traffic map.
   traffic,
 }
 
-/// A map widget.
+/// A map widget that fills all space available to it.
 ///
-/// ## Choosing map vendor
+/// ## Choosing MapAdapter
 /// Before using map widgets, you need to choose some [MapAdapter].
 ///
 /// In the `main` function of your application:
 /// ```
+/// import 'package:maps/maps.dart';
+///
 /// void main() {
 ///   // Configure default map engine
 ///   MapAdapter.defaultInstance = const MapAdapter.platformSpecific(
-///     android: GoogleMapsNativeAdapter(apiKey:'YOUR API KEY'),
-///     browser: GoogleMapsIframeAdapter(apiKey:'YOUR API KEY'),
 ///     ios: AppleMapsNativeAdapter(),
-///     otherwise: GoogleMapStaticAdapter(apiKey:'YOUR API KEY'),
+///     otherwise: BingMapsIframeAdapter(apiKey:'YOUR API KEY'),
 ///   );
+///
+///   // ...
+///
+///   runApp(MyApp(
+///     // ...
+///   ));
 /// }
 /// ```
 ///
-/// ## Using the widget
+/// ## Using MapWidget
 /// ```
 /// import 'package:flutter/widgets.dart';
 /// import 'package:maps/maps.dart';
 ///
-/// class MyWidget extends StatelessWidget {
+/// class ParisMap extends StatelessWidget {
 ///   @override
 ///   Widget build(BuildContext context) {
 ///     return MapWidget(
-///       size: Size(300, 500),
 ///       query: 'Paris',
 ///       markers: [
 ///         MapMarker(
@@ -131,12 +70,23 @@ enum MapType {
 ///   }
 /// }
 /// ```
+///
+/// ## Avoiding resizing
+///
+/// Resizing the map can be an expensive operation. If the parent widget layout
+/// changes often, wrap it with something like:
+/// ```
+/// final fixedSizeMap = Center(
+///   child: SizedWidget(
+///     width: 400,
+///     height: 400,
+///     child: mapWidget,
+///   ),
+/// );
+/// ```
 class MapWidget extends StatefulWidget {
-  /// Size of the map. For example, `Size(300, 500)`.
-  final Size size;
-
   /// Camera location and zoom.
-  final MapCamera camera;
+  final MapLocation location;
 
   /// Markers on the map.
   final List<MapMarker> markers;
@@ -161,8 +111,8 @@ class MapWidget extends StatefulWidget {
   final Widget Function(BuildContext context, MapWidget widget) loadingBuilder;
 
   const MapWidget({
-    @required this.size,
-    @required this.camera,
+    Key key,
+    @required this.location,
     this.markers = const <MapMarker>[],
     this.adapter,
     this.userLocationEnabled = true,
@@ -170,13 +120,13 @@ class MapWidget extends StatefulWidget {
     this.zoomControlsEnabled = true,
     this.zoomGesturesEnabled = true,
     this.loadingBuilder,
-  })  : assert(size != null),
-        assert(camera != null),
+  })  : assert(location != null),
         assert(markers != null),
         assert(userLocationEnabled != null),
         assert(userLocationButtonEnabled != null),
         assert(zoomControlsEnabled != null),
-        assert(zoomGesturesEnabled != null);
+        assert(zoomGesturesEnabled != null),
+        super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -185,16 +135,28 @@ class MapWidget extends StatefulWidget {
 }
 
 class MapWidgetState extends State<MapWidget> {
-  /// Optimization: we cache the built widget.
-  Widget _builtWidget;
+  @override
+  Widget build(BuildContext context) {
+    final adapter = widget.adapter ?? MapAdapter.defaultInstance;
+    if (adapter == null) {
+      throw StateError(
+        'Both `widget.mapAdapter` and `MapAdapter.defaultInstance` are null',
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, dimensions) {
+        return adapter.buildMapWidget(widget, dimensions.smallest);
+      },
+    );
+  }
 
   @override
   void didUpdateWidget(MapWidget oldWidget) {
     /// Optimization: we re-build the widget only when necessary.
     final widget = this.widget;
     if (!(widget.adapter == oldWidget.adapter &&
-        widget.camera == oldWidget.camera &&
-        widget.size == oldWidget.size &&
+        widget.location == oldWidget.location &&
         widget.userLocationEnabled == oldWidget.userLocationEnabled &&
         widget.userLocationButtonEnabled &&
         oldWidget.userLocationButtonEnabled &&
@@ -204,30 +166,8 @@ class MapWidgetState extends State<MapWidget> {
           widget.markers,
           oldWidget.markers,
         ))) {
-      _builtWidget = null;
+      setState(() {});
     }
     super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    /// Optimization: we try to use a cached widget.
-    final oldBuiltWidget = _builtWidget;
-    if (oldBuiltWidget != null) {
-      return oldBuiltWidget;
-    }
-
-    final adapter = widget.adapter ?? MapAdapter.defaultInstance;
-    if (adapter == null) {
-      throw StateError(
-        'Both `mapAdapter` and `MapAdapter.defaultInstance` are null',
-      );
-    }
-    final builtWidget = adapter.buildMapWidget(widget);
-
-    /// Optimization: we cache the widget.
-    _builtWidget = builtWidget;
-
-    return builtWidget;
   }
 }

@@ -16,7 +16,30 @@ import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 import 'package:web_browser/web_browser.dart';
 
-Widget buildGoogleMapsJs(GoogleMapsJsAdapter adapter, MapWidget mapWidget) {
+Widget buildGoogleMapsIframe(String url, Size size) {
+  final width = size.width.toInt();
+  final height = size.height.toInt();
+  url = url.replaceAll('&', '&amp;').replaceAll('"', '&quot;');
+  return WebBrowser(
+    // URL
+    initialUrl: Uri.dataFromString(
+      '''<html><head><meta name="viewport" content="width=$width, height=$height"></head><body style="margin:0;padding:0;"><iframe src="$url" width="$width" height="$height"></iframe></body></html>''',
+      mimeType: 'text/html',
+    ).toString(),
+
+    // No navigation buttons
+    interactionSettings: null,
+
+    // Javascript required
+    javascriptEnabled: true,
+  );
+}
+
+Widget buildGoogleMapsJs(
+  GoogleMapsJsAdapter adapter,
+  MapWidget mapWidget,
+  Size size,
+) {
   final sb = StringBuffer();
   sb.write('https://maps.googleapis.com/maps/api/js?key=');
   sb.write(Uri.encodeQueryComponent(adapter.apiKey));
@@ -27,17 +50,18 @@ Widget buildGoogleMapsJs(GoogleMapsJsAdapter adapter, MapWidget mapWidget) {
   scriptSb.writeln('function initMap() {');
   scriptSb.writeln('  new google.maps.Map(document.getElementById("map")); }');
   scriptSb.writeln('}');
-  final script = scriptSb.toString().replaceAll('&', '&amp;');
+  final script =
+      scriptSb.toString().replaceAll('&', '&amp;').replaceAll('<', '&lt;');
 
+  final width = size.width.toInt().toString();
+  final height = size.height.toInt().toString();
   final html = '<!DOCTYPE html>'
       '<html>'
-      '<head>'
-      '<style>html,body{margin:0;padding:0;border:0;}#map{width:100%;}</style>'
-      '</head>'
-      '<body>'
-      '<div id="map"></div>'
-      '<script type="text/javascript">$script</script>'
+      '<head><meta name="viewport" content="width=$width, height=$height"></head>'
+      '<body style="margin:0;padding:0;">'
+      '<div id="map" style="position:fixed;left:0;top:0;width:$width;height:$height"></div>'
       '<script src="$src" async defer></script>'
+      '<script type="text/javascript">$script</script>'
       '</body>'
       '</html>';
 

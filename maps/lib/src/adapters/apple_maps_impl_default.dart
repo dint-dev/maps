@@ -18,34 +18,46 @@ import 'package:apple_maps_flutter/apple_maps_flutter.dart' as impl;
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 
-Widget buildAppleMapsJs(AppleMapsJsAdapter mapAdapter, MapWidget widget) {
+Widget buildAppleMapsJs(
+    AppleMapsJsAdapter mapAdapter, MapWidget widget, Size size) {
   return null;
 }
 
-Widget buildAppleMapsNative(AppleMapsNativeAdapter engine, MapWidget widget) {
+Widget buildAppleMapsNative(
+    AppleMapsNativeAdapter engine, MapWidget widget, Size size) {
   if (!Platform.isIOS) {
     return null;
   }
-  return SizedBox(
-    width: widget.size.width,
-    height: widget.size.height,
-    child: impl.AppleMap(
-      initialCameraPosition: _cameraPositionFrom(widget.camera),
-      myLocationEnabled: widget.userLocationEnabled,
-      myLocationButtonEnabled: widget.userLocationButtonEnabled,
-      zoomGesturesEnabled: widget.zoomGesturesEnabled,
-      annotations: (widget.markers ?? const <MapMarker>[]).map((marker) {
-        return impl.Annotation(
-          annotationId: impl.AnnotationId(
-            marker.query ?? marker.geoPoint?.toString(),
-          ),
-        );
-      }).toSet(),
-    ),
+
+  return impl.AppleMap(
+    initialCameraPosition: _cameraPositionFrom(widget.location),
+    myLocationEnabled: widget.userLocationEnabled,
+    myLocationButtonEnabled: widget.userLocationButtonEnabled,
+    zoomGesturesEnabled: widget.zoomGesturesEnabled,
+    annotations: widget.markers.map(_annotationFrom).toSet(),
   );
 }
 
-impl.CameraPosition _cameraPositionFrom(MapCamera value) {
+impl.Annotation _annotationFrom(MapMarker marker) {
+  impl.InfoWindow infoWindow;
+
+  final details = marker.details;
+  if (details != null) {
+    infoWindow = impl.InfoWindow(
+      title: details.title,
+      snippet: details.snippet,
+    );
+  }
+
+  return impl.Annotation(
+    annotationId: impl.AnnotationId(marker.id),
+    position: _latLngFrom(marker.geoPoint),
+    infoWindow: infoWindow,
+    onTap: marker.onTap,
+  );
+}
+
+impl.CameraPosition _cameraPositionFrom(MapLocation value) {
   return impl.CameraPosition(
     target: _latLngFrom(value.geoPoint ?? GeoPoint.zero),
     zoom: value.zoom,

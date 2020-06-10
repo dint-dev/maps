@@ -1,3 +1,7 @@
+## 0.3.0
+
+* Changes various APIs.
+
 ## 0.2.1
 
 * Improves documentation.

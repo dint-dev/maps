@@ -15,11 +15,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 
-Widget buildAppleMapsJs(AppleMapsJsAdapter mapAdapter, MapWidget widget) {
+Widget buildAppleMapsJs(
+    AppleMapsJsAdapter mapAdapter, MapWidget widget, Size size) {
   return null;
 }
 
 Widget buildAppleMapsNative(
-    AppleMapsNativeAdapter mapAdapter, MapWidget widget) {
+    AppleMapsNativeAdapter mapAdapter, MapWidget widget, Size size) {
   return null;
 }

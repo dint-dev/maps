@@ -5,7 +5,7 @@
 
 Cross-platform geographic maps for Flutter applications.
 
-__This is an early-stage version and lots of things are still missing or broken.__
+__This is an early version and lots of things are still missing or broken.__
 
 Pull requests are welcome! The package is licensed under the [Apache License 2.0](LICENSE).
 
@@ -20,7 +20,7 @@ Pull requests are welcome! The package is licensed under the [Apache License 2.0
 In _pubspec.yaml_:
 ```yaml
 dependencies:
-  maps: ^0.2.1
+  maps: ^0.3.0
 ```
 
 Add the following in `ios/Runner/Info.plist`:
@@ -30,19 +30,19 @@ Add the following in `ios/Runner/Info.plist`:
 ```
 
 ## 2.Use
-### MapAppLauncher
-[MapAppLauncher](https://pub.dev/documentation/maps/latest/maps/MapAppLauncher-class.html) launches
+### Launching external application?
+[MapLauncher](https://pub.dev/documentation/maps/latest/maps/MapLauncher-class.html) launches
 map applications.
 
 The following implementations are available:
-  * [MapAppLauncher.appleMaps](https://pub.dev/documentation/maps/latest/maps/MapAppLauncher/appleMaps-constant.html)
+  * [AppleMapsLauncher](https://pub.dev/documentation/maps/latest/maps/AppleMapsLauncher-class.html)
     launches Apple Maps (native application - the user must have an iOS device)
-  * [MapAppLauncher.bingMaps](https://pub.dev/documentation/maps/latest/maps/MapAppLauncher/appleMaps-constant.html)
+  * [BingMapsLauncher](https://pub.dev/documentation/maps/latest/maps/BingMapsLauncher-class.html)
     launches Bing Maps (website)
-  * [MapAppLauncher.googleMaps](https://pub.dev/documentation/maps/latest/maps/MapAppLauncher/appleMaps-constant.html)
-    launches Google Maps (website or native application)
-  * [MapAppLauncher.defaultInstance](https://pub.dev/documentation/maps/latest/maps/MapAppLauncher/appleMaps-constant.html)
-    launches one of the above.
+  * [GoogleMapsLauncher](https://pub.dev/documentation/maps/latest/maps/GoogleMapsLauncher-class.html)
+    launches Google Maps (native application or website)
+  * [MapLauncher.platformSpecific](https://pub.dev/documentation/maps/latest/maps/MapLauncher/MapLauncher.platformSpecific.html)
+    allows you to specify launcher for each operating system.
 
 ```dart
 import 'package:maps/maps.dart';
@@ -50,37 +50,46 @@ import 'package:maps/maps.dart';
 Future<void> main() async {
   // Use default map app
   await MapAppLauncher.defaultInstance.launch(
-    query: 'Paris'
+    query: 'Paris',
   );
 }
 ```
 
-### MapWidget
-[MapWidget](https://pub.dev/documentation/maps/latest/maps/MapWidget-class.html) shows a map:
+### Rendering a map?
+[MapWidget](https://pub.dev/documentation/maps/latest/maps/MapWidget-class.html) shows a map.
+It fills all space available to it.
+
 ```dart
 import 'package:flutter/material.dart';
 import 'package:maps/maps.dart';
 
 void main() {
+  // Set default adapter
+  MapAdapter.defaultInstance = MapAdapter.platformSpecific(
+    ios: AppleNativeAdapter(),
+
+    // Bing Maps iframe API does not necessarily require API credentials
+    // so we use it in the example.
+    otherwise: BingMapsIframeAdapter(),
+  );
+
+  // Construct a map widget
+  const parisMap = MapWidget(
+    location: MapLocation(
+      query: 'Paris',
+    ),
+    markers: [
+      MapMarker(
+        query: 'Eiffel Tower',
+      ),
+    ],
+  );
+
+  // Run our example app
   runApp(const MaterialApp(
     home: Scaffold(
-      body: MapWidget(
-        size: Size(300, 500),
-        camera: MapCamera(
-          query: 'Paris',
-        ),
-        markers: [
-          MapMarker(
-            query: 'Eiffel Tower',
-          ),
-        ],
-        adapter: MapAdapter.platformSpecific(
-          ios: AppleNativeAdapter(),
-
-          // Bing Maps iframe API does not necessarily require API credentials
-          // so we use it in the example.
-          otherwise: BingMapsIframeAdapter(),
-        ),
+      body: SafeArea(
+        child: parisMap, // Full-screen map of Paris
       ),
     ),
   ));

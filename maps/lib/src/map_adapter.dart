@@ -15,7 +15,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:maps/maps.dart';
 
-import 'internal/platform_specific.dart';
+import 'adapters/platform_specific.dart';
 
 /// Superclass for map vendor adapters. The default map vendor is defined by
 /// [MapAdapter.defaultInstance].
@@ -88,5 +88,5 @@ abstract class MapAdapter {
   String get productName;
 
   /// Constructs a Flutter widget.
-  Widget buildMapWidget(MapWidget widget);
+  Widget buildMapWidget(MapWidget widget, Size size);
 }

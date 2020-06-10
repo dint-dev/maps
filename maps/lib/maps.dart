@@ -20,9 +20,11 @@ library maps;
 
 import 'src/map_widget.dart';
 
-export 'src/apple_maps.dart';
-export 'src/bing_maps.dart';
-export 'src/google_maps.dart';
+export 'src/adapters/apple_maps.dart';
+export 'src/adapters/bing_maps.dart';
+export 'src/adapters/google_maps.dart';
 export 'src/map_adapter.dart';
-export 'src/map_app_launcher.dart';
+export 'src/map_launcher.dart';
+export 'src/map_location.dart';
+export 'src/map_marker.dart';
 export 'src/map_widget.dart';

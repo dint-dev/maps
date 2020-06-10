@@ -19,20 +19,43 @@ import 'package:maps/maps.dart';
 import 'package:web_browser/web_browser.dart';
 
 import 'bing_maps_js_bindings.dart' as api;
-import 'internal/js.dart';
+import 'internal.dart';
 
-Widget buildBingMapsJs(BingMapsJsAdapter mapAdapter, MapWidget widget) {
+Widget buildBingMapsIframe(String url, Size size) {
+  return WebBrowser(
+    // URL
+    initialUrl: url,
+
+    // No navigation buttons
+    interactionSettings: null,
+
+    // Javascript required
+    javascriptEnabled: true,
+  );
+}
+
+Widget buildBingMapsJs(
+  BingMapsJsAdapter mapAdapter,
+  MapWidget widget,
+  Size size,
+) {
   return _BingMapsJsWidget(
     apiKey: mapAdapter.apiKey,
     widget: widget,
+    size: size,
   );
 }
 
 class _BingMapsJsWidget extends StatefulWidget {
   final String apiKey;
   final MapWidget widget;
+  final Size size;
 
-  _BingMapsJsWidget({@required this.apiKey, @required this.widget});
+  _BingMapsJsWidget({
+    @required this.apiKey,
+    @required this.widget,
+    @required this.size,
+  });
 
   @override
   State<_BingMapsJsWidget> createState() {
@@ -84,7 +107,7 @@ class _BingMapsJsWidgetState extends State<_BingMapsJsWidget> {
       html.document.body.append(htmlElement);
 
       // Call Javascript API
-      final camera = widget.widget.camera;
+      final camera = widget.widget.location;
       _map = api.Map(
         id,
         api.MapArgs(

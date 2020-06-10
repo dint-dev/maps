@@ -12,9 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/widgets.dart';
-import 'package:maps/maps.dart';
+import 'dart:io' show Platform;
 
-Widget buildBingMapsJs(BingMapsJsAdapter mapAdapter, MapWidget widget) {
-  throw StateError('BingMapsJsAdapter is only supported in browsers');
+import 'package:url_launcher/url_launcher.dart' as url_launcher;
+
+Future<bool> canLaunch(String url) {
+  return url_launcher.canLaunch(url);
 }
+
+Future<bool> launch(String url) {
+  return url_launcher.launch(url);
+}
+
+bool get isAndroid => Platform.isAndroid;
+bool get isIOS => Platform.isIOS;
+bool get isMacOS => Platform.isMacOS;

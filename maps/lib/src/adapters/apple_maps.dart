@@ -52,8 +52,8 @@ class AppleMapsJsAdapter extends MapAdapter {
   String get productName => 'Apple Maps';
 
   @override
-  Widget buildMapWidget(MapWidget widget) {
-    return buildAppleMapsJs(this, widget);
+  Widget buildMapWidget(MapWidget widget, Size size) {
+    return buildAppleMapsJs(this, widget, size);
   }
 }
 
@@ -81,8 +81,8 @@ class AppleMapsNativeAdapter extends MapAdapter {
   String get productName => 'Apple Maps';
 
   @override
-  Widget buildMapWidget(MapWidget widget) {
-    return buildAppleMapsNative(this, widget);
+  Widget buildMapWidget(MapWidget widget, Size size) {
+    return buildAppleMapsNative(this, widget, size);
   }
 }
 
@@ -132,8 +132,8 @@ class AppleMapsStaticAdapter extends MapAdapter {
   String get productName => 'Apple Maps';
 
   @override
-  Widget buildMapWidget(MapWidget widget) {
-    return _AppleMapsStaticWidget(widget, requestSigner);
+  Widget buildMapWidget(MapWidget widget, Size size) {
+    return _AppleMapsStaticWidget(widget, requestSigner, size);
   }
 }
 
@@ -178,8 +178,9 @@ class _AppleMapsRequestSigner extends AppleMapsRequestSigner {
 class _AppleMapsStaticWidget extends StatefulWidget {
   final MapWidget mapWidget;
   final AppleMapsRequestSigner requestSigner;
+  final Size size;
 
-  _AppleMapsStaticWidget(this.mapWidget, this.requestSigner);
+  _AppleMapsStaticWidget(this.mapWidget, this.requestSigner, this.size);
 
   @override
   State<StatefulWidget> createState() {
@@ -188,67 +189,46 @@ class _AppleMapsStaticWidget extends StatefulWidget {
 }
 
 class _AppleMapsStaticWidgetState extends State<_AppleMapsStaticWidget> {
-  String _src;
-  Widget _widget;
+  Future<String> _future;
+  String _oldUrl;
+  String _oldSignedUrl;
 
   @override
   Widget build(BuildContext context) {
-    return _widget;
-  }
-
-  @override
-  void didUpdateWidget(_AppleMapsStaticWidget oldWidget) {
-    if (!_mapsEqual(widget, oldWidget)) {
-      _refresh();
+    final url = buildUrl();
+    if (url == _oldUrl) {
+      return Image.network(_oldSignedUrl);
     }
-    super.didUpdateWidget(oldWidget);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _widget = SizedBox(
-      width: widget.mapWidget.size.width,
-      height: widget.mapWidget.size.height,
+    _future ??= () {
+      return widget.requestSigner.signUrl(url);
+    }();
+    return FutureBuilder<String>(
+      future: _future,
+      builder: (context, snapshot) {
+        final signedUrl = snapshot.data;
+        _future = null;
+        _oldUrl = url;
+        _oldSignedUrl = signedUrl;
+        return Image.network(signedUrl);
+      },
     );
   }
 
-  Widget _error(Object error, {@required String src}) {
-    var message = 'Building Apple Maps image failed.';
-    assert(() {
-      message += '\n\nURL: $_src\n\nError: $error';
-      return true;
-    }());
-    return SizedBox(
-      width: widget.mapWidget.size.width,
-      height: widget.mapWidget.size.height,
-      child: Text(message),
-    );
-  }
-
-  bool _mapsEqual(_AppleMapsStaticWidget a, _AppleMapsStaticWidget b) {
-    return a.mapWidget.size == b.mapWidget.size &&
-        a.mapWidget.camera == b.mapWidget.camera &&
-        a.requestSigner == b.requestSigner;
-  }
-
-  void _refresh() {
-    final mapWidget = widget.mapWidget;
-    final camera = mapWidget.camera;
-
-    // Base URL
+  String buildUrl() {
     final sb = StringBuffer();
     sb.write('https://snapshot.apple-mapkit.com/api/v1/snapshot');
 
     // Size
+    final size = widget.size;
     sb.write('?size=');
-    sb.write(mapWidget.size.width.toInt());
+    sb.write(size.width.toInt());
     sb.write('x');
-    sb.write(mapWidget.size.height.toInt());
+    sb.write(size.height.toInt());
 
-    // Query or GeoPoint
-    final query = camera.query ?? '';
-    final geoPoint = camera.geoPoint;
+    // Location
+    final location = widget.mapWidget.location;
+    final query = location.query ?? '';
+    final geoPoint = location.geoPoint;
     if (geoPoint != null) {
       sb.write('&center=');
       sb.write(geoPoint.latitude);
@@ -260,22 +240,18 @@ class _AppleMapsStaticWidgetState extends State<_AppleMapsStaticWidget> {
     }
 
     // Zoom
-    sb.write('&z=');
-    sb.write(camera.zoom.clamp(3, 20));
+    final zoom = location.zoom;
+    if (zoom != null) {
+      sb.write('&z=');
+      sb.write(zoom.clamp(3, 20));
+    }
 
     // Sign the request
-    final src = sb.toString();
-    widget.requestSigner.signUrl(src).then((src) {
-      _widget = Image.network(
-        src,
-        width: widget.mapWidget.size.width,
-        height: widget.mapWidget.size.height,
-        errorBuilder: (context, error, stackTrace) {
-          return _error(error, src: src);
-        },
-      );
-    }, onError: (error) {
-      _widget = _error(error, src: src);
-    });
+    return sb.toString();
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 }

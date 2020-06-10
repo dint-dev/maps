@@ -29,6 +29,8 @@ class _ExampleApp extends StatefulWidget {
   }
 }
 
+const parisGeoPoint = GeoPoint(48.856613, 2.352222);
+
 class _ExampleAppState extends State<_ExampleApp> {
   static const defaultMapAdapter = MapAdapter.platformSpecific(
     ios: appleMapsNative,
@@ -49,9 +51,10 @@ class _ExampleAppState extends State<_ExampleApp> {
   MapAdapter selectedAdapter = defaultMapAdapter;
 
   String query;
-  GeoPoint geoPoint = const GeoPoint(48.856613, 2.352222);
 
-  double zoom = 10;
+  GeoPoint geoPoint = parisGeoPoint;
+
+  double zoom = 11.0;
 
   // Paris
   @override
@@ -93,47 +96,41 @@ class _ExampleAppState extends State<_ExampleApp> {
   }
 
   Widget buildMapLauncherDemo(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.center,
+    return ListView(
+      padding: const EdgeInsets.all(16),
       children: <Widget>[
         MaterialButton(
           child: Text('Apple Maps'),
           onPressed: () {
-            MapAppLauncher.appleMaps.launch(
-              camera: MapCamera(
-                query: query,
-                geoPoint: geoPoint,
-              ),
+            const AppleMapsLauncher().launch(
+              query: query,
+              geoPoint: geoPoint,
             );
           },
         ),
         MaterialButton(
           child: Text('Bing Maps'),
           onPressed: () {
-            MapAppLauncher.bingMaps.launch(
-              camera: MapCamera(
-                query: query,
-                geoPoint: geoPoint,
-              ),
+            const BingMapsApp().launch(
+              query: query,
+              geoPoint: geoPoint,
             );
           },
         ),
         MaterialButton(
           child: Text('Google Maps'),
           onPressed: () {
-            MapAppLauncher.googleMaps.launch(
-              camera: MapCamera(
-                query: query,
-                geoPoint: geoPoint,
-              ),
+            const GoogleMapsLauncher().launch(
+              query: query,
+              geoPoint: geoPoint,
             );
           },
         ),
       ],
     );
   }
+
+  final _key = GlobalKey();
 
   Widget buildMapWidgetDemo(BuildContext context) {
     final radioButtonRows = <Row>[];
@@ -171,21 +168,37 @@ class _ExampleAppState extends State<_ExampleApp> {
     f('Google Maps (native)', googleMapsNative);
     f('Google Maps (static)', googleMapsStatic);
 
-    return Column(
-      children: [
-        Container(
-          height: 50,
-        ),
-        Text('MapWidget:'),
-        SizedBox(
-          width: 500,
-          height: 300,
-          child: MapWidget(
-            adapter: selectedAdapter,
-            size: Size(500, 300),
-            camera: MapCamera(
-              geoPoint: geoPoint,
-              zoom: zoom,
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: <Widget>[
+        Center(
+          child: SizedBox(
+            width: _width,
+            height: _height,
+            child: MapWidget(
+              key: _key,
+              adapter: selectedAdapter,
+              location: MapLocation(
+                query: query,
+                geoPoint: geoPoint,
+                zoom: zoom,
+              ),
+              markers: [
+                MapMarker(
+                  geoPoint: GeoPoint(48.8606, 2.3376),
+                  details: MapMarkerDetails(
+                    title: 'Louvre',
+                    snippet: 'A popular museum.',
+                  ),
+                ),
+                MapMarker(
+                  geoPoint: GeoPoint(48.8539, 2.2913),
+                  details: MapMarkerDetails(
+                    title: 'Eiffel Tower',
+                    snippet: 'An iconic tower.',
+                  ),
+                ),
+              ],
             ),
           ),
         ),
@@ -195,36 +208,87 @@ class _ExampleAppState extends State<_ExampleApp> {
           textAlign: TextAlign.left,
         ),
         ...radioButtonRows,
+        Text('Width (${_width.toInt()} px)'),
+        Slider(
+          min: 100,
+          max: 1000,
+          value: _width.toDouble(),
+          onChanged: (newValue) {
+            setState(() {
+              _width = newValue;
+            });
+          },
+        ),
+        Text('Height (${_height.toInt()} px)'),
+        Slider(
+          min: 100,
+          max: 1000,
+          value: _height.toDouble(),
+          onChanged: (newValue) {
+            setState(() {
+              _height = newValue;
+            });
+          },
+        ),
       ],
     );
   }
 
+  double _width = 500.0;
+  double _height = 300.0;
+
   Widget buildSettings(BuildContext context) {
-    final queryController = TextEditingController();
-    queryController.text = query;
-    return Column(
+    return ListView(
+      padding: const EdgeInsets.all(16),
       children: <Widget>[
-        Row(children: [
-          Text('Query:'),
-          MaterialButton(
-            child: Text('None'),
-            onPressed: () {
-              setState(() {
-                query = '';
-              });
-            },
-          ),
-          MaterialButton(
-            child: Text('Paris, France'),
-            onPressed: () {
-              setState(() {
-                query = 'Paris, France';
-              });
-            },
-          ),
-        ]),
+        MaterialButton(
+          child: Text('No geopoint'),
+          onPressed: () {
+            setState(() {
+              geoPoint = null;
+            });
+          },
+        ),
+        MaterialButton(
+          child: Text('Paris geopoint'),
+          onPressed: () {
+            setState(() {
+              geoPoint = parisGeoPoint;
+            });
+          },
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Text('Query:'),
+            MaterialButton(
+              child: Text('None'),
+              onPressed: () {
+                setState(() {
+                  query = '';
+                });
+              },
+            ),
+            MaterialButton(
+              child: Text('Tokyo'),
+              onPressed: () {
+                setState(() {
+                  query = 'Tokyo';
+                });
+              },
+            ),
+            MaterialButton(
+              child: Text('New York'),
+              onPressed: () {
+                setState(() {
+                  query = 'New York';
+                });
+              },
+            ),
+          ],
+        ),
         TextField(
-          controller: queryController,
+          controller: TextEditingController()..text = query,
           maxLength: 30,
           onChanged: (newValue) {
             query = newValue;

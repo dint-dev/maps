@@ -5,10 +5,8 @@ void main() {
   runApp(const MaterialApp(
     home: Scaffold(
       body: MapWidget(
-        size: Size(300, 500),
-
-        camera: MapCamera(
-          geoPoint: GeoPoint(0, 0),
+        location: MapLocation(
+          query: 'Paris',
         ),
 
         // Bing Maps iframe API does not necessarily require API credentials

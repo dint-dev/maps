@@ -51,7 +51,7 @@ class GoogleMapsNativeAdapter extends MapAdapter {
   String get productName => 'Google Maps';
 
   @override
-  Widget buildMapWidget(MapWidget mapWidget) {
-    return buildGoogleMapsNative(this, mapWidget);
+  Widget buildMapWidget(MapWidget mapWidget, Size size) {
+    return buildGoogleMapsNative(this, mapWidget, size);
   }
 }

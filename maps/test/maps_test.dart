@@ -12,25 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:maps/maps.dart';
 
 void main() {
   group('MapAppLauncher.defaultInstance', () {
-    test('Throws ArgumentError when camera is null', () {
-      expect(
-        () => MapAppLauncher.defaultInstance.buildUrl(
-          camera: null,
-        ),
-        throwsArgumentError,
-      );
-    });
-
     test('returns URL', () {
       expect(
-        () => MapAppLauncher.defaultInstance.buildUrl(
-          camera: MapCamera(query: 'Paris'),
+        () => MapLauncher.defaultInstance.buildUrl(
+          query: 'Paris',
         ),
         isNotNull,
       );
@@ -39,8 +29,7 @@ void main() {
 
   test('Create MapWidget', () {
     MapWidget(
-      size: Size(100, 100),
-      camera: MapCamera(
+      location: MapLocation(
         geoPoint: GeoPoint.zero,
       ),
     );

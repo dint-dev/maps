@@ -42,7 +42,7 @@ class PlatformSpecificMapAdapter extends MapAdapter {
   });
 
   @override
-  Widget buildMapWidget(MapWidget widget) {
+  Widget buildMapWidget(MapWidget widget, Size size) {
     /// Use conditionally imported function to determine the engine.
     /// (This enables tree-shaking by the compiler to prune browser/non-browser
     /// code.)
@@ -50,6 +50,6 @@ class PlatformSpecificMapAdapter extends MapAdapter {
     if (engine == null) {
       return Text('No map engine is configured for this platform');
     }
-    return engine.buildMapWidget(widget);
+    return engine.buildMapWidget(widget, size);
   }
 }
