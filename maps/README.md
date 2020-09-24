@@ -20,7 +20,7 @@ Pull requests are welcome! The package is licensed under the [Apache License 2.0
 In _pubspec.yaml_:
 ```yaml
 dependencies:
-  maps: ^0.3.0
+  maps: ^0.4.0
 ```
 
 Add the following in `ios/Runner/Info.plist`:
@@ -109,7 +109,7 @@ flutter run -d chrome
     The current implementation depends on the Flutter package [apple_maps_flutter](https://pub.dev/packages/apple_maps_flutter),
     a package by a third-party developer.
   * The adapter doesn't require API credentials.
-  * You need to edit `ios/Runner/Info.plist` (see "recommended configuration file changes").
+  * You need to edit `ios/Runner/Info.plist`.
 
 ### Javascript
   * [AppleMapsJsAdapter](https://pub.dev/documentation/maps/latest/maps/AppleMapsJsAdapter-class.html)

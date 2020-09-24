@@ -12,20 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'dart:io' show Platform;
+/// Describes type of map.
+enum MapType {
+  /// Normal map.
+  normal,
 
-import 'package:url_launcher/url_launcher.dart' as url_launcher;
+  /// Transit map.
+  transit,
 
-Future<bool> canLaunch(String url) {
-  return url_launcher.canLaunch(url);
+  /// Road traffic map.
+  traffic,
+
+  /// Bicycling map.
+  bicycling,
+
+  /// Satellite map.
+  satellite,
+
+  /// Terrain map.
+  terrain,
+
+  /// Hybrid.
+  hybrid,
 }
-
-Future<bool> launch(String url) {
-  return url_launcher.launch(url);
-}
-
-bool get isAndroid => Platform.isAndroid;
-
-bool get isIOS => Platform.isIOS;
-
-bool get isMacOS => Platform.isMacOS;

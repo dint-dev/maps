@@ -18,8 +18,8 @@ import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 import 'package:web_browser/web_browser.dart';
 
-import 'internal.dart';
 import 'google_maps_js_bindings.dart' as google_maps;
+import 'internal.dart';
 
 Widget buildGoogleMapsIframe(String url, Size size) {
   return WebBrowser(
@@ -108,11 +108,22 @@ class _GoogleMapsJsState extends State<_GoogleMapsJs> {
       _map = google_maps.Map(
           element,
           google_maps.MapArgs(
-            center: google_maps.LatLng(lat: 0.0, lng: 0.0),
+            center: _latLngFrom(widget.mapWidget.location.geoPoint),
           ));
+      for (var marker in widget.mapWidget.markers) {
+        final googleMapsMarker = google_maps.Marker(
+          position: _latLngFrom(marker.geoPoint),
+          title: marker.details?.title,
+        );
+        googleMapsMarker.setMap(_map);
+      }
       _widget = WebNode(node: element);
     }
 
     return _widget;
   }
+}
+
+google_maps.LatLng _latLngFrom(GeoPoint geoPoint) {
+  return google_maps.LatLng(geoPoint.latitude, geoPoint.longitude);
 }

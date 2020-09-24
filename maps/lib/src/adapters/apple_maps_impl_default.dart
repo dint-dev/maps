@@ -30,11 +30,21 @@ Widget buildAppleMapsNative(
   }
 
   return impl.AppleMap(
+    mapType: _mapTypeFrom(widget.mapType),
     initialCameraPosition: _cameraPositionFrom(widget.location),
+    annotations: widget.markers.map(_annotationFrom).toSet(),
+    polylines: widget.lines.map(_polyLineFrom).toSet(),
+    circles: widget.circles.map(_circleFrom).toSet(),
+
+    // My location
     myLocationEnabled: widget.userLocationEnabled,
     myLocationButtonEnabled: widget.userLocationButtonEnabled,
+
+    // Scrolling
+    scrollGesturesEnabled: widget.scrollGesturesEnabled,
+
+    // Zooming
     zoomGesturesEnabled: widget.zoomGesturesEnabled,
-    annotations: widget.markers.map(_annotationFrom).toSet(),
   );
 }
 
@@ -48,7 +58,6 @@ impl.Annotation _annotationFrom(MapMarker marker) {
       snippet: details.snippet,
     );
   }
-
   return impl.Annotation(
     annotationId: impl.AnnotationId(marker.id),
     position: _latLngFrom(marker.geoPoint),
@@ -57,10 +66,20 @@ impl.Annotation _annotationFrom(MapMarker marker) {
   );
 }
 
-impl.CameraPosition _cameraPositionFrom(MapLocation value) {
+impl.CameraPosition _cameraPositionFrom(MapLocation mapLocation) {
   return impl.CameraPosition(
-    target: _latLngFrom(value.geoPoint ?? GeoPoint.zero),
-    zoom: value.zoom,
+    target: _latLngFrom(mapLocation.geoPoint ?? GeoPoint.zero),
+    zoom: mapLocation.zoom.value,
+  );
+}
+
+impl.Circle _circleFrom(MapCircle value) {
+  return impl.Circle(
+    circleId: impl.CircleId(value.id),
+    center: _latLngFrom(value.geoPoint),
+    radius: value.radius,
+    fillColor: value.fillColor,
+    strokeColor: value.strokeColor,
   );
 }
 
@@ -69,4 +88,28 @@ impl.LatLng _latLngFrom(GeoPoint geoPoint) {
     return null;
   }
   return impl.LatLng(geoPoint.latitude, geoPoint.longitude);
+}
+
+impl.Polyline _polyLineFrom(MapLine value) {
+  return impl.Polyline(
+    polylineId: impl.PolylineId(value.id),
+    points: <impl.LatLng>[...value.geoPoints.map(_latLngFrom)],
+    color: value.color,
+    width: value.width?.toInt(),
+  );
+}
+
+impl.MapType _mapTypeFrom(MapType mapType) {
+  switch (mapType) {
+    case MapType.normal:
+      return impl.MapType.standard;
+    case MapType.satellite:
+      return impl.MapType.satellite;
+    case MapType.terrain:
+      return impl.MapType.satellite;
+    case MapType.hybrid:
+      return impl.MapType.hybrid;
+    default:
+      return impl.MapType.standard;
+  }
 }

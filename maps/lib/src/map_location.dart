@@ -31,7 +31,7 @@ class MapLocation {
   final GeoPoint geoPoint;
 
   /// Zoom level.
-  final double zoom;
+  final Zoom zoom;
 
   const MapLocation({
     this.query,
@@ -48,4 +48,20 @@ class MapLocation {
       query == other.query &&
       geoPoint == other.geoPoint &&
       zoom == other.zoom;
+}
+
+/// Zoom is a value typically between 1 (farthest) and 20 (closest).
+class Zoom {
+  final double value;
+
+  const Zoom(this.value) : assert(value != null), assert(value>=0), assert(value<=23);
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
+  bool operator ==(other) => other is Zoom && value == other.value;
+
+  @override
+  String toString() => 'Zoom($value)';
 }

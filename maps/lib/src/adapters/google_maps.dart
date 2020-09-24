@@ -75,10 +75,10 @@ class GoogleMapsIframeAdapter extends MapAdapter {
     }
 
     // Zoom
-    final zoom = location.zoom ?? 11;
+    final zoom = location.zoom;
     if (zoom != null) {
       sb.write('&zoom=');
-      sb.write(zoom.toInt().clamp(1, 20));
+      sb.write(zoom == null ? 11 : zoom.value.toInt().clamp(1, 20));
     }
 
     // API key
@@ -174,7 +174,7 @@ class GoogleMapsStaticAdapter extends MapAdapter {
     final zoom = location.zoom;
     if (zoom != null) {
       sb.write('&zoom=');
-      sb.write(zoom.toInt().clamp(1, 20));
+      sb.write(zoom.value.toInt().clamp(1, 20));
     }
 
     // API key

@@ -18,13 +18,16 @@
 ///   * [MapWidget]
 library maps;
 
-import 'src/map_widget.dart';
+export 'package:database/database.dart' show GeoPoint;
 
 export 'src/adapters/apple_maps.dart';
 export 'src/adapters/bing_maps.dart';
 export 'src/adapters/google_maps.dart';
 export 'src/map_adapter.dart';
+export 'src/map_circle.dart';
 export 'src/map_launcher.dart';
+export 'src/map_line.dart';
 export 'src/map_location.dart';
 export 'src/map_marker.dart';
+export 'src/map_type.dart';
 export 'src/map_widget.dart';

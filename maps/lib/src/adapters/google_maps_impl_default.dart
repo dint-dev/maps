@@ -48,7 +48,15 @@ Widget buildGoogleMapsJs(
 
   final scriptSb = StringBuffer();
   scriptSb.writeln('function initMap() {');
-  scriptSb.writeln('  new google.maps.Map(document.getElementById("map")); }');
+  scriptSb.writeln('  var map = new google.maps.Map(');
+  scriptSb.writeln('    document.getElementById("map"), {');
+  final center = mapWidget.location.geoPoint;
+  if (center != null) {
+    final lat = center.latitude;
+    final lon = center.longitude;
+    scriptSb.writeln('    center: google.maps.LatLng($lat, $lon),');
+  }
+  scriptSb.writeln('});');
   scriptSb.writeln('}');
   final script =
       scriptSb.toString().replaceAll('&', '&amp;').replaceAll('<', '&lt;');
@@ -69,6 +77,11 @@ Widget buildGoogleMapsJs(
 
   return WebBrowser(
     initialUrl: url,
+
+    // No navigation buttons
+    interactionSettings: null,
+
+    // Javascript required
     javascriptEnabled: true,
   );
 }

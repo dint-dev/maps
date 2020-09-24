@@ -43,7 +43,7 @@ class AppleMapsLauncher extends MapLauncher {
   Future<String> buildUrl({
     String query,
     GeoPoint geoPoint,
-    int zoom,
+    Zoom zoom,
     MapType mapType,
   }) async {
     final sb = StringBuffer();
@@ -69,10 +69,21 @@ class AppleMapsLauncher extends MapLauncher {
       return null;
     }
 
+    // Type
+    final appleMapsType = {
+      MapType.normal: 'm',
+      MapType.transit: 'r',
+      MapType.satellite: 'k',
+      MapType.terrain: 'k',
+      MapType.hybrid: 'h',
+    }[mapType ?? MapType.normal];
+    sb.write('&t=');
+    sb.write(appleMapsType);
+
     // Zoom
     if (zoom != null) {
       sb.write('&z=');
-      sb.write(zoom.clamp(2, 20));
+      sb.write(zoom.value.toInt().clamp(2, 20));
     }
 
     return sb.toString();
@@ -104,16 +115,16 @@ class BingMapsApp extends MapLauncher {
   Future<String> buildUrl({
     String query,
     GeoPoint geoPoint,
-    int zoom,
+    Zoom zoom,
     MapType mapType,
   }) async {
     final sb = StringBuffer();
     sb.write('https://www.bing.com/maps');
     query ??= '';
-    if (query.isNotEmpty) {
+    if (query.isNotEmpty && geoPoint==null) {
       sb.write('?where1=');
       sb.write(Uri.encodeQueryComponent(query));
-    } else if (geoPoint != null && geoPoint.isValid) {
+    } else if (geoPoint != null) {
       sb.write('?cp=');
       sb.write(geoPoint.latitude.toString());
       sb.write('~');
@@ -125,7 +136,17 @@ class BingMapsApp extends MapLauncher {
     // Zoom
     if (zoom != null) {
       sb.write('&lvl=');
-      sb.write(zoom.clamp(2, 20));
+      sb.write(zoom.value.toInt().clamp(2, 20));
+    }
+
+    // Style
+    final style = {
+      MapType.satellite: 'h',
+      MapType.hybrid: 'h',
+    }[mapType];
+    if (style!=null) {
+      sb.write('&style=');
+      sb.write(style);
     }
 
     return sb.toString();
@@ -157,19 +178,20 @@ class GoogleMapsLauncher extends MapLauncher {
   Future<String> buildUrl({
     String query,
     GeoPoint geoPoint,
-    int zoom,
+    Zoom zoom,
     MapType mapType,
   }) async {
-    final sb = StringBuffer();
-
     // Camera must have either query or geoPoint
     query ??= '';
-    if (query.isNotEmpty) {
+    if (query.isNotEmpty && geoPoint==null) {
+      final sb = StringBuffer();
       sb.write('https://www.google.com/maps/search/?api=1');
       sb.write('&query=');
       sb.write(Uri.encodeQueryComponent(query));
       return sb.toString();
     }
+
+    final sb = StringBuffer();
     sb.write('https://www.google.com/maps/@?api=1&map_action=map');
     if (geoPoint != null && geoPoint.isValid) {
       sb.write('&center=');
@@ -181,7 +203,17 @@ class GoogleMapsLauncher extends MapLauncher {
     // Zoom
     if (zoom != null) {
       sb.write('&zoom=');
-      sb.write(zoom.clamp(1, 20));
+      sb.write(zoom.value.toInt().clamp(1, 20));
+    }
+
+    final layer = {
+      MapType.traffic: 'traffic',
+      MapType.transit: 'transit',
+      MapType.bicycling: 'bicycling',
+    }[mapType];
+    if (layer!=null) {
+      sb.write('&layer=');
+      sb.write(layer);
     }
 
     return sb.toString();
@@ -227,7 +259,7 @@ abstract class MapLauncher {
   /// Builds URL where the map is.
   Future<String> buildUrl({
     String query,
-    int zoom,
+    Zoom zoom,
     GeoPoint geoPoint,
     MapType mapType,
   });
@@ -236,7 +268,7 @@ abstract class MapLauncher {
   Future<bool> canLaunch({
     String query,
     GeoPoint geoPoint,
-    int zoom,
+    Zoom zoom,
     MapType mapType,
   }) {
     return buildUrl(
@@ -295,7 +327,7 @@ class _PlatformSpecificExternalMapApp extends MapLauncher {
   Future<String> buildUrl({
     String query,
     GeoPoint geoPoint,
-    int zoom,
+    Zoom zoom,
     MapType mapType,
   }) async {
     for (var item in _getList()) {

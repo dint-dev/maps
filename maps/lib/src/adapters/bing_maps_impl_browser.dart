@@ -67,7 +67,6 @@ class _BingMapsJsWidgetState extends State<_BingMapsJsWidget> {
   static int _bingElementNextId = 0;
   LoadedScript _script;
   Widget _builtWidget;
-  api.Map _map;
 
   @override
   Widget build(BuildContext context) {
@@ -108,14 +107,14 @@ class _BingMapsJsWidgetState extends State<_BingMapsJsWidget> {
 
       // Call Javascript API
       final camera = widget.widget.location;
-      _map = api.Map(
+      api.Map(
         id,
         api.MapArgs(
           center: api.Location(
             camera.geoPoint.latitude,
             camera.geoPoint.longitude,
           ),
-          zoom: camera.zoom.toInt(),
+          zoom: camera.zoom.value.toInt(),
         ),
       );
 

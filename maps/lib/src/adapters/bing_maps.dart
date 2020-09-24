@@ -57,8 +57,8 @@ class BingMapsIframeAdapter extends MapAdapter {
     sb.write(size.width.toInt());
 
     // Location
-    final location = widget.location;
-    final geoPoint = location.geoPoint;
+    final mapLocation = widget.location;
+    final geoPoint = mapLocation.geoPoint;
     if (geoPoint != null && geoPoint.isValid) {
       // GeoPoint
       sb.write('&cp=');
@@ -68,14 +68,27 @@ class BingMapsIframeAdapter extends MapAdapter {
     }
 
     // Zoom
-    final zoom = location.zoom ?? 11;
+    final zoom = mapLocation.zoom ?? 11;
     if (zoom != null) {
       sb.write('&lvl=');
-      sb.write(location.zoom.toInt().clamp(0, 20));
+      sb.write(mapLocation.zoom.value.toInt().clamp(0, 20));
     }
 
+    // Type
+    sb.write('&typ=d');
+
+    // Style
+    final style = {
+          MapType.satellite: 'h',
+          MapType.terrain: 'h',
+        }[widget.mapType] ??
+        'r';
+    sb.write('&sty=');
+    sb.write(style);
+
     // Other
-    sb.write('&typ=d&sty=r&src=SHELL&FORM=MBEDV8');
+    sb.write('&src=SHELL&FORM=MBEDV8');
+
     final url = sb.toString();
 
     return buildBingMapsIframe(url, size);
@@ -186,7 +199,7 @@ class BingMapsStaticAdapter extends MapAdapter {
     final zoom = location.zoom;
     if (zoom != null) {
       sb.write('&lvl=');
-      sb.write(zoom.toInt().clamp(0, 20));
+      sb.write(zoom.value.toInt().clamp(0, 20));
     }
 
     // API key

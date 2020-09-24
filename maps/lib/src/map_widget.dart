@@ -18,15 +18,6 @@ import 'package:maps/maps.dart';
 
 export 'package:database/database.dart' show GeoPoint;
 
-/// Describes type of map.
-enum MapType {
-  /// Normal map.
-  normal,
-
-  /// Traffic map.
-  traffic,
-}
-
 /// A map widget that fills all space available to it.
 ///
 /// ## Choosing MapAdapter
@@ -85,14 +76,26 @@ enum MapType {
 /// );
 /// ```
 class MapWidget extends StatefulWidget {
+  /// Map engine. If null, [MapAdapter.defaultInstance] is used.
+  final MapAdapter adapter;
+
+  /// Map type. The default value is [MapType.normal].
+  final MapType mapType;
+
   /// Camera location and zoom.
   final MapLocation location;
 
-  /// Markers on the map.
-  final List<MapMarker> markers;
+  /// Markers that should be drawn by the [adapter].
+  /// Not all adapters support this feature.
+  final Set<MapMarker> markers;
 
-  /// Map engine. If null, [MapAdapter.defaultInstance] is used.
-  final MapAdapter adapter;
+  /// Lines that should be drawn by the [adapter].
+  /// Not all adapters support this feature.
+  final Set<MapLine> lines;
+
+  /// Circles that should be drawn by the [adapter].
+  /// Not all adapters support this feature.
+  final Set<MapCircle> circles;
 
   /// Whether to show the user's current location. The default is `true`.
   final bool userLocationEnabled;
@@ -100,6 +103,9 @@ class MapWidget extends StatefulWidget {
   /// Whether to show a button that shows the user's current location. The
   /// default is `true`.
   final bool userLocationButtonEnabled;
+
+  /// Whether to support scroll gestures. The default is `true`.
+  final bool scrollGesturesEnabled;
 
   /// Whether to show zoom buttons. The default is `true`.
   final bool zoomControlsEnabled;
@@ -112,16 +118,23 @@ class MapWidget extends StatefulWidget {
 
   const MapWidget({
     Key key,
+    this.mapType = MapType.normal,
     @required this.location,
-    this.markers = const <MapMarker>[],
+    this.markers = const <MapMarker>{},
+    this.lines = const <MapLine>{},
+    this.circles = const <MapCircle>{},
     this.adapter,
     this.userLocationEnabled = true,
     this.userLocationButtonEnabled = true,
+    this.scrollGesturesEnabled = true,
     this.zoomControlsEnabled = true,
     this.zoomGesturesEnabled = true,
     this.loadingBuilder,
-  })  : assert(location != null),
+  })  : assert(mapType != null),
+        assert(location != null),
         assert(markers != null),
+        assert(lines != null),
+        assert(circles != null),
         assert(userLocationEnabled != null),
         assert(userLocationButtonEnabled != null),
         assert(zoomControlsEnabled != null),
@@ -131,6 +144,28 @@ class MapWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return MapWidgetState();
+  }
+
+  static bool _equal(MapWidget widget, MapWidget oldWidget) {
+    return widget.adapter == oldWidget.adapter &&
+        widget.location == oldWidget.location &&
+        widget.userLocationEnabled == oldWidget.userLocationEnabled &&
+        widget.userLocationButtonEnabled &&
+        oldWidget.userLocationButtonEnabled &&
+        widget.zoomControlsEnabled == oldWidget.zoomControlsEnabled &&
+        widget.zoomGesturesEnabled == oldWidget.zoomGesturesEnabled &&
+        const SetEquality<MapMarker>().equals(
+          widget.markers,
+          oldWidget.markers,
+        ) &&
+        const SetEquality<MapLine>().equals(
+          widget.lines,
+          oldWidget.lines,
+        ) &&
+        const SetEquality<MapCircle>().equals(
+          widget.circles,
+          oldWidget.circles,
+        );
   }
 }
 
@@ -153,19 +188,9 @@ class MapWidgetState extends State<MapWidget> {
 
   @override
   void didUpdateWidget(MapWidget oldWidget) {
-    /// Optimization: we re-build the widget only when necessary.
+    // We re-build the widget only when the widget has really been mutated.
     final widget = this.widget;
-    if (!(widget.adapter == oldWidget.adapter &&
-        widget.location == oldWidget.location &&
-        widget.userLocationEnabled == oldWidget.userLocationEnabled &&
-        widget.userLocationButtonEnabled &&
-        oldWidget.userLocationButtonEnabled &&
-        widget.zoomControlsEnabled == oldWidget.zoomControlsEnabled &&
-        widget.zoomGesturesEnabled == oldWidget.zoomGesturesEnabled &&
-        const ListEquality<MapMarker>().equals(
-          widget.markers,
-          oldWidget.markers,
-        ))) {
+    if (!MapWidget._equal(widget, oldWidget)) {
       setState(() {});
     }
     super.didUpdateWidget(oldWidget);

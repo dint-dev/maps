@@ -30,24 +30,40 @@ Widget buildGoogleMapsNative(
       'GoogleMapsNativeAdapter is only supported in Android/iOS',
     );
   }
-
-  final markers = widget.markers ?? <MapMarker>[];
-  final implMarkers = markers.map(_markerFrom).toList();
-
   return impl.GoogleMap(
+    mapType: _mapTypeFrom(widget.mapType),
     initialCameraPosition: _cameraPositionFrom(widget.location),
+    markers: widget.markers.map(_markerFrom).toSet(),
+    polylines: widget.lines.map(_polyLineFrom).toSet(),
+    circles: widget.circles.map(_circleFrom).toSet(),
+
+    // My location
     myLocationEnabled: widget.userLocationEnabled,
     myLocationButtonEnabled: widget.userLocationButtonEnabled,
+
+    // Scrolling
+    scrollGesturesEnabled: widget.scrollGesturesEnabled,
+
+    // Zooming
     zoomControlsEnabled: widget.zoomControlsEnabled,
     zoomGesturesEnabled: widget.zoomGesturesEnabled,
-    markers: widget.markers.map(_markerFrom).toSet(),
   );
 }
 
 impl.CameraPosition _cameraPositionFrom(MapLocation value) {
   return impl.CameraPosition(
     target: _latLngFrom(value.geoPoint ?? GeoPoint.zero),
-    zoom: value.zoom,
+    zoom: value.zoom.value,
+  );
+}
+
+impl.Circle _circleFrom(MapCircle value) {
+  return impl.Circle(
+    circleId: impl.CircleId(value.id),
+    center: _latLngFrom(value.geoPoint),
+    radius: value.radius,
+    fillColor: value.fillColor,
+    strokeColor: value.strokeColor,
   );
 }
 
@@ -68,11 +84,35 @@ impl.LatLng _latLngFrom(GeoPoint value) {
   return impl.LatLng(value.latitude, value.longitude);
 }
 
+impl.MapType _mapTypeFrom(MapType mapType) {
+  switch (mapType) {
+    case MapType.normal:
+      return impl.MapType.normal;
+    case MapType.satellite:
+      return impl.MapType.satellite;
+    case MapType.terrain:
+      return impl.MapType.terrain;
+    case MapType.hybrid:
+      return impl.MapType.hybrid;
+    default:
+      return impl.MapType.normal;
+  }
+}
+
 impl.Marker _markerFrom(MapMarker value) {
   return impl.Marker(
     markerId: impl.MarkerId(value.id),
     position: _latLngFrom(value.geoPoint),
     infoWindow: _infoWindowFrom(value.details),
     onTap: value.onTap,
+  );
+}
+
+impl.Polyline _polyLineFrom(MapLine value) {
+  return impl.Polyline(
+    polylineId: impl.PolylineId(value.id),
+    points: <impl.LatLng>[...value.geoPoints.map(_latLngFrom)],
+    color: value.color,
+    width: value.width?.toInt(),
   );
 }

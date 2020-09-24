@@ -19,26 +19,25 @@ import 'dart:html' as html;
 
 import 'package:js/js.dart';
 
-@JS()
-@anonymous
-class LatLng {
-  external factory LatLng({double lat, double lng});
-}
-
-@JS()
-class Map {
-  external factory Map(html.Element element, [MapArgs args]);
-}
-
-@JS('Map')
-external Object get _map;
-
 bool get isLoaded {
   try {
     return _map != null;
   } catch (e) {
     return false;
   }
+}
+
+@JS('Map')
+external Object get _map;
+
+@JS()
+class LatLng {
+  external factory LatLng(double lat, double lng);
+}
+
+@JS('Map')
+class Map {
+  external factory Map(html.Element element, [MapArgs args]);
 }
 
 @JS()
@@ -48,4 +47,15 @@ class MapArgs {
     LatLng center,
     int zoom,
   });
+}
+
+@JS('Marker')
+class Marker {
+  external factory Marker({
+    LatLng position,
+    String map,
+    String title,
+  });
+
+  external void setMap(Map map);
 }

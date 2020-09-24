@@ -15,9 +15,9 @@
 import 'package:database/database.dart' show GeoPoint;
 import 'package:maps/maps.dart';
 
-export 'package:database/database.dart' show GeoPoint;
-
-/// A marker in a map.
+/// Specifies a marker that should be drawn by [MapWidget].
+///
+/// Not all [MapAdapter] implementations support this feature.
 ///
 /// ## Example
 /// ```
@@ -27,8 +27,8 @@ export 'package:database/database.dart' show GeoPoint;
 /// );
 /// ```
 class MapMarker {
-  /// Marker identifier.
-  String get id => geoPoint.toString();
+  /// Unique identifier required by some adapters.
+  final String _id;
 
   /// Optional query string such as name of place ("Tower Of London") or address.
   final String query;
@@ -43,14 +43,18 @@ class MapMarker {
   final void Function() onTap;
 
   const MapMarker({
+    String id,
     this.query,
     this.geoPoint,
     this.details,
     this.onTap,
-  });
+  }) : _id = id;
 
   @override
   int get hashCode => query.hashCode ^ geoPoint.hashCode ^ details.hashCode;
+
+  /// Unique identifier required by some adapters.
+  String get id => _id ?? '${geoPoint ?? query}';
 
   @override
   bool operator ==(other) =>
@@ -61,6 +65,7 @@ class MapMarker {
       onTap == other.onTap;
 }
 
+/// Detailed information about a place. Used by [MapMarker].
 class MapMarkerDetails {
   /// Optional title of the marker.
   final String title;

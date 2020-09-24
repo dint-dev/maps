@@ -2,11 +2,11 @@ name: maps
 description:
   A cross-platform geographic maps package. Supports Apple MapKit, Bing Maps, and Google Maps. Works
   in all platforms supported by Flutter, including browsers.
-version: 0.3.0
+version: 0.4.0
 homepage: https://github.com/dint-dev/maps
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.8.0 <3.0.0"
 
 dependencies:
   # Maintained by a individual developer.
@@ -37,7 +37,7 @@ dependencies:
   url_launcher: ^5.4.10
 
   # Maintained by dint.dev.
-  web_browser: ^0.2.1
+  web_browser: ^0.2.2
 
 dev_dependencies:
   flutter_test:

@@ -1,3 +1,8 @@
+## 0.4.0
+
+* Adds support for lines and circles.
+* Various fixes, including some breaking changes.
+
 ## 0.3.0
 
 * Changes various APIs.

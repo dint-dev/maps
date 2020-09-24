@@ -243,7 +243,7 @@ class _AppleMapsStaticWidgetState extends State<_AppleMapsStaticWidget> {
     final zoom = location.zoom;
     if (zoom != null) {
       sb.write('&z=');
-      sb.write(zoom.clamp(3, 20));
+      sb.write(zoom.value.clamp(3, 20));
     }
 
     // Sign the request

@@ -22,14 +22,14 @@ void main() {
   runApp(_ExampleApp());
 }
 
+const parisGeoPoint = GeoPoint(48.856613, 2.352222);
+
 class _ExampleApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     return _ExampleAppState();
   }
 }
-
-const parisGeoPoint = GeoPoint(48.856613, 2.352222);
 
 class _ExampleAppState extends State<_ExampleApp> {
   static const defaultMapAdapter = MapAdapter.platformSpecific(
@@ -57,6 +57,12 @@ class _ExampleAppState extends State<_ExampleApp> {
   double zoom = 11.0;
 
   // Paris
+  final _key = GlobalKey();
+
+  double _width = 500.0;
+
+  double _height = 300.0;
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -74,15 +80,15 @@ class _ExampleAppState extends State<_ExampleApp> {
           items: [
             BottomNavigationBarItem(
               icon: Icon(Icons.launch),
-              title: Text('MapLauncher'),
+              label: 'MapLauncher',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.map),
-              title: Text('MapWidget'),
+              label: 'MapWidget',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.settings),
-              title: Text('Settings'),
+              label: 'Settings',
             ),
           ],
           onTap: (i) {
@@ -129,9 +135,6 @@ class _ExampleAppState extends State<_ExampleApp> {
       ],
     );
   }
-
-  final _key = GlobalKey();
-
   Widget buildMapWidgetDemo(BuildContext context) {
     final radioButtonRows = <Row>[];
     void f(String name, MapAdapter value) {
@@ -181,9 +184,9 @@ class _ExampleAppState extends State<_ExampleApp> {
               location: MapLocation(
                 query: query,
                 geoPoint: geoPoint,
-                zoom: zoom,
+                zoom: Zoom(zoom),
               ),
-              markers: [
+              markers: {
                 MapMarker(
                   geoPoint: GeoPoint(48.8606, 2.3376),
                   details: MapMarkerDetails(
@@ -198,7 +201,7 @@ class _ExampleAppState extends State<_ExampleApp> {
                     snippet: 'An iconic tower.',
                   ),
                 ),
-              ],
+              },
             ),
           ),
         ),
@@ -233,9 +236,6 @@ class _ExampleAppState extends State<_ExampleApp> {
       ],
     );
   }
-
-  double _width = 500.0;
-  double _height = 300.0;
 
   Widget buildSettings(BuildContext context) {
     return ListView(
