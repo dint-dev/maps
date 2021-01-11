@@ -111,10 +111,10 @@ class _GoogleMapsJsState extends State<_GoogleMapsJs> {
             center: _latLngFrom(widget.mapWidget.location.geoPoint),
           ));
       for (var marker in widget.mapWidget.markers) {
-        final googleMapsMarker = google_maps.Marker(
+        final googleMapsMarker = google_maps.Marker(google_maps.MarkerArgs(
           position: _latLngFrom(marker.geoPoint),
           title: marker.details?.title,
-        );
+        ));
         googleMapsMarker.setMap(_map);
       }
       _widget = WebNode(node: element);

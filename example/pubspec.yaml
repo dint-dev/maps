@@ -7,16 +7,16 @@ environment:
   sdk: ">=2.8.0 <3.0.0"
 
 dependencies:
-  cupertino_icons: ^0.1.3
+  cupertino_icons: ^1.0.0
   flutter:
     sdk: flutter
-  maps: ^0.4.0
-  maps_adapter_google_maps: ^0.1.0
+  maps: ^0.4.1
+  maps_adapter_google_maps: ^0.2.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pedantic: ^1.9.0
+  pedantic: ^1.9.2
 
 dependency_overrides:
   maps:

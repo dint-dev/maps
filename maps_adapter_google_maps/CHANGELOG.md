@@ -1,3 +1,7 @@
+## 0.2.2
+
+* Fixes dependency constraints.
+
 ## 0.2.1
 
 * Uses 'package:maps' version 0.4.

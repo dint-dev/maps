@@ -1,3 +1,7 @@
+## 0.4.1
+
+* Fixes dependency constraints.
+
 ## 0.4.0
 
 * Adds support for lines and circles.

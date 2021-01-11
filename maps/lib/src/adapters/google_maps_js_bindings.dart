@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-@JS('google.maps')
+@JS()
 library google_maps_js;
 
 import 'dart:html' as html;
@@ -27,15 +27,15 @@ bool get isLoaded {
   }
 }
 
-@JS('Map')
+@JS('google.maps.Map')
 external Object get _map;
 
-@JS()
+@JS('google.maps.LatLng')
 class LatLng {
   external factory LatLng(double lat, double lng);
 }
 
-@JS('Map')
+@JS('google.maps.Map')
 class Map {
   external factory Map(html.Element element, [MapArgs args]);
 }
@@ -49,13 +49,18 @@ class MapArgs {
   });
 }
 
-@JS('Marker')
+@JS('google.maps.Marker')
 class Marker {
-  external factory Marker({
+  external factory Marker(MarkerArgs args);
+
+  external void setMap(Map map);
+}
+@JS()
+@anonymous
+class MarkerArgs {
+  external factory MarkerArgs({
     LatLng position,
     String map,
     String title,
   });
-
-  external void setMap(Map map);
 }
