@@ -7,21 +7,24 @@ jobs:
     runs-on: ubuntu-latest
 
     container:
-      image:  oursky/flutter:1.17.1
+      image:  oursky/flutter:1.17.5
 
     steps:
       - uses: actions/checkout@v1
 
+      - name: Upgrade Flutter
+        run: flutter config --no-analytics && flutter upgrade
+
       - name: Install dependencies (maps)
-        run: flutter pub get --suppress-analytics
+        run: flutter pub get
         working-directory: maps
 
       - name: Install dependencies (maps_adapter_google_maps)
-        run: flutter pub get --suppress-analytics
+        run: flutter pub get
         working-directory: maps_adapter_google_maps
 
       - name: Install dependencies (example)
-        run: flutter pub get --suppress-analytics
+        run: flutter pub get
         working-directory: example
 
       - name: Run tests (maps)
