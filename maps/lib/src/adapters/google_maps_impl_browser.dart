@@ -17,6 +17,7 @@ import 'dart:html' as html;
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 import 'package:web_browser/web_browser.dart';
+import 'package:web_node/web_node.dart';
 
 import 'google_maps_js_bindings.dart' as google_maps;
 import 'internal.dart';
@@ -43,6 +44,10 @@ Widget buildGoogleMapsJs(
     apiKey: adapter.apiKey,
     mapWidget: mapWidget,
   );
+}
+
+google_maps.LatLng _latLngFrom(GeoPoint geoPoint) {
+  return google_maps.LatLng(geoPoint.latitude, geoPoint.longitude);
 }
 
 class _GoogleMapsJs extends StatefulWidget {
@@ -122,8 +127,4 @@ class _GoogleMapsJsState extends State<_GoogleMapsJs> {
 
     return _widget;
   }
-}
-
-google_maps.LatLng _latLngFrom(GeoPoint geoPoint) {
-  return google_maps.LatLng(geoPoint.latitude, geoPoint.longitude);
 }

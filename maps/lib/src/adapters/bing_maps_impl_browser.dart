@@ -17,6 +17,7 @@ import 'dart:html' as html;
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 import 'package:web_browser/web_browser.dart';
+import 'package:web_node/web_node.dart';
 
 import 'bing_maps_js_bindings.dart' as api;
 import 'internal.dart';

@@ -1,3 +1,11 @@
+## 0.4.3
+
+* Fixes dependency constraints.
+
+## 0.4.2
+
+* Fixes dependency constraints.
+
 ## 0.4.1
 
 * Fixes dependency constraints.

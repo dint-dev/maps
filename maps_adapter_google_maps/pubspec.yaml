@@ -1,17 +1,17 @@
 name: maps_adapter_google_maps
 description: An adapter between 'package:maps' and 'google_maps_flutter'.
-version: 0.2.2
+version: 0.2.3
 homepage: https://github.com/dint-dev/maps
 
 environment:
-  sdk: ">=2.10.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
   flutter:
     sdk: flutter
   google_maps_flutter: ^1.0.10
-  maps: ^0.4.1
+  maps: ^0.4.2
 
 dev_dependencies:
   flutter_test:

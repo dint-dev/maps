@@ -4,14 +4,15 @@ publish_to: none
 version: 0.1.0
 
 environment:
-  sdk: ">=2.8.0 <3.0.0"
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.17.0"
 
 dependencies:
   cupertino_icons: ^1.0.0
   flutter:
     sdk: flutter
-  maps: ^0.4.1
-  maps_adapter_google_maps: ^0.2.1
+  maps: ^0.4.2
+  maps_adapter_google_maps: ^0.2.3
 
 dev_dependencies:
   flutter_test:
