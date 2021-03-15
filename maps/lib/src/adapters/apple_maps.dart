@@ -15,7 +15,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:cryptography_flutter/cryptography.dart';
+import 'package:cryptography/cryptography.dart';
 import 'package:flutter/widgets.dart';
 import 'package:maps/maps.dart';
 
@@ -95,7 +95,7 @@ abstract class AppleMapsRequestSigner {
   const factory AppleMapsRequestSigner.withPrivateKey({
     @required String teamId,
     @required String keyId,
-    @required EcJwkPrivateKey privateKey,
+    @required EcKeyPair keyPair,
   }) = _AppleMapsRequestSigner;
 
   /// Signs the URL using the algorithm described by Apple.
@@ -140,13 +140,13 @@ class AppleMapsStaticAdapter extends MapAdapter {
 class _AppleMapsRequestSigner extends AppleMapsRequestSigner {
   final String teamId;
   final String keyId;
-  final EcJwkPrivateKey privateKey;
+  final EcKeyPair keyPair;
 
   const _AppleMapsRequestSigner(
-      {@required this.teamId, @required this.keyId, @required this.privateKey})
+      {@required this.teamId, @required this.keyId, @required this.keyPair})
       : assert(teamId != null),
         assert(keyId != null),
-        assert(privateKey != null);
+        assert(keyPair != null);
 
   @override
   Future<String> signUrl(String url) async {
@@ -159,15 +159,9 @@ class _AppleMapsRequestSigner extends AppleMapsRequestSigner {
     sb.write(Uri.encodeComponent(teamId));
     sb.write('&keyId=');
     sb.write(Uri.encodeComponent(keyId));
-    if (ecdsaP256Sha256 == null) {
-      throw UnimplementedError();
-    }
-    final signature = await ecdsaP256Sha256.sign(
+    final signature = await Ecdsa.p256(Sha256()).sign(
       utf8.encode(url),
-      KeyPair(
-        privateKey: privateKey,
-        publicKey: privateKey.toPublicKey(),
-      ),
+      keyPair: keyPair,
     );
     sb.write('&signature=');
     sb.write(base64.encode(signature.bytes));

@@ -59,7 +59,7 @@ class BingMapsIframeAdapter extends MapAdapter {
     // Location
     final mapLocation = widget.location;
     final geoPoint = mapLocation.geoPoint;
-    if (geoPoint != null && geoPoint.isValid) {
+    if (geoPoint != null) {
       // GeoPoint
       sb.write('&cp=');
       sb.write(geoPoint.latitude);
@@ -185,7 +185,7 @@ class BingMapsStaticAdapter extends MapAdapter {
     final location = widget.location;
     final query = location.query ?? '';
     final geoPoint = location.geoPoint;
-    if (geoPoint != null && geoPoint.isValid) {
+    if (geoPoint != null) {
       sb.write('&centerPoint=');
       sb.write(geoPoint.latitude);
       sb.write(',');

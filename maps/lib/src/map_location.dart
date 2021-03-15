@@ -12,10 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:database/database.dart' show GeoPoint;
 import 'package:maps/maps.dart';
-
-export 'package:database/database.dart' show GeoPoint;
 
 /// Defines map location.
 class MapLocation {
@@ -54,7 +51,10 @@ class MapLocation {
 class Zoom {
   final double value;
 
-  const Zoom(this.value) : assert(value != null), assert(value>=0), assert(value<=23);
+  const Zoom(this.value)
+      : assert(value != null),
+        assert(value >= 0),
+        assert(value <= 23);
 
   @override
   int get hashCode => value.hashCode;

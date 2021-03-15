@@ -55,6 +55,7 @@ class Marker {
 
   external void setMap(Map map);
 }
+
 @JS()
 @anonymous
 class MarkerArgs {

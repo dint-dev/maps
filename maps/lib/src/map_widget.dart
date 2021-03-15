@@ -16,8 +16,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:maps/maps.dart';
 
-export 'package:database/database.dart' show GeoPoint;
-
 /// A map widget that fills all space available to it.
 ///
 /// ## Choosing MapAdapter

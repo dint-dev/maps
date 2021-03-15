@@ -54,13 +54,13 @@ class AppleMapsLauncher extends MapLauncher {
     if (query.isNotEmpty) {
       sb.write('?q=');
       sb.write(Uri.encodeQueryComponent(query));
-      if (geoPoint != null && geoPoint.isValid) {
+      if (geoPoint != null) {
         sb.write('&sll=');
         sb.write(geoPoint.latitude.toString());
         sb.write(',');
         sb.write(geoPoint.longitude.toString());
       }
-    } else if (geoPoint != null && geoPoint.isValid) {
+    } else if (geoPoint != null) {
       sb.write('?ll=');
       sb.write(geoPoint.latitude.toString());
       sb.write(',');
@@ -121,7 +121,7 @@ class BingMapsApp extends MapLauncher {
     final sb = StringBuffer();
     sb.write('https://www.bing.com/maps');
     query ??= '';
-    if (query.isNotEmpty && geoPoint==null) {
+    if (query.isNotEmpty && geoPoint == null) {
       sb.write('?where1=');
       sb.write(Uri.encodeQueryComponent(query));
     } else if (geoPoint != null) {
@@ -144,7 +144,7 @@ class BingMapsApp extends MapLauncher {
       MapType.satellite: 'h',
       MapType.hybrid: 'h',
     }[mapType];
-    if (style!=null) {
+    if (style != null) {
       sb.write('&style=');
       sb.write(style);
     }
@@ -183,7 +183,7 @@ class GoogleMapsLauncher extends MapLauncher {
   }) async {
     // Camera must have either query or geoPoint
     query ??= '';
-    if (query.isNotEmpty && geoPoint==null) {
+    if (query.isNotEmpty && geoPoint == null) {
       final sb = StringBuffer();
       sb.write('https://www.google.com/maps/search/?api=1');
       sb.write('&query=');
@@ -193,7 +193,7 @@ class GoogleMapsLauncher extends MapLauncher {
 
     final sb = StringBuffer();
     sb.write('https://www.google.com/maps/@?api=1&map_action=map');
-    if (geoPoint != null && geoPoint.isValid) {
+    if (geoPoint != null) {
       sb.write('&center=');
       sb.write(geoPoint.latitude);
       sb.write(',');
@@ -211,7 +211,7 @@ class GoogleMapsLauncher extends MapLauncher {
       MapType.transit: 'transit',
       MapType.bicycling: 'bicycling',
     }[mapType];
-    if (layer!=null) {
+    if (layer != null) {
       sb.write('&layer=');
       sb.write(layer);
     }

@@ -20,7 +20,7 @@ Pull requests are welcome! The package is licensed under the [Apache License 2.0
 In _pubspec.yaml_:
 ```yaml
 dependencies:
-  maps: ^0.4.0
+  maps: ^0.5.0
 ```
 
 Add the following in `ios/Runner/Info.plist`:

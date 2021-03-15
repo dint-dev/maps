@@ -1,3 +1,9 @@
+## 0.5.0
+
+* Began migration to Flutter 2.
+* Migrated to [cryptography](https://pub.dev/packages/kind) 2.0.
+* Uses GeoPoint from [kind](https://pub.dev/packages/kind).
+
 ## 0.4.3
 
 * Fixes dependency constraints.

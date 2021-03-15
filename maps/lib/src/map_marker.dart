@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'package:database/database.dart' show GeoPoint;
 import 'package:maps/maps.dart';
 
 /// Specifies a marker that should be drawn by [MapWidget].

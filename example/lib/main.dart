@@ -22,7 +22,7 @@ void main() {
   runApp(_ExampleApp());
 }
 
-const parisGeoPoint = GeoPoint(48.856613, 2.352222);
+final parisGeoPoint = GeoPoint(48.856613, 2.352222);
 
 class _ExampleApp extends StatefulWidget {
   @override
@@ -106,31 +106,31 @@ class _ExampleAppState extends State<_ExampleApp> {
       padding: const EdgeInsets.all(16),
       children: <Widget>[
         MaterialButton(
-          child: Text('Apple Maps'),
           onPressed: () {
             const AppleMapsLauncher().launch(
               query: query,
               geoPoint: geoPoint,
             );
           },
+          child: Text('Apple Maps'),
         ),
         MaterialButton(
-          child: Text('Bing Maps'),
           onPressed: () {
             const BingMapsApp().launch(
               query: query,
               geoPoint: geoPoint,
             );
           },
+          child: Text('Bing Maps'),
         ),
         MaterialButton(
-          child: Text('Google Maps'),
           onPressed: () {
             const GoogleMapsLauncher().launch(
               query: query,
               geoPoint: geoPoint,
             );
           },
+          child: Text('Google Maps'),
         ),
       ],
     );
@@ -242,48 +242,48 @@ class _ExampleAppState extends State<_ExampleApp> {
       padding: const EdgeInsets.all(16),
       children: <Widget>[
         MaterialButton(
-          child: Text('No geopoint'),
           onPressed: () {
             setState(() {
               geoPoint = null;
             });
           },
+          child: Text('No geopoint'),
         ),
         MaterialButton(
-          child: Text('Paris geopoint'),
           onPressed: () {
             setState(() {
               geoPoint = parisGeoPoint;
             });
           },
+          child: Text('Paris geopoint'),
         ),
         Row(
           mainAxisSize: MainAxisSize.max,
           children: [
             Text('Query:'),
             MaterialButton(
-              child: Text('None'),
               onPressed: () {
                 setState(() {
                   query = '';
                 });
               },
+              child: Text('None'),
             ),
             MaterialButton(
-              child: Text('Tokyo'),
               onPressed: () {
                 setState(() {
                   query = 'Tokyo';
                 });
               },
+              child: Text('Tokyo'),
             ),
             MaterialButton(
-              child: Text('New York'),
               onPressed: () {
                 setState(() {
                   query = 'New York';
                 });
               },
+              child: Text('New York'),
             ),
           ],
         ),

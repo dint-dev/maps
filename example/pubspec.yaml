@@ -1,28 +1,29 @@
 name: example
 description: An example.
 publish_to: none
-version: 0.1.0
+version: 0.0.1
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.9.0 <3.0.0"
   flutter: ">=1.17.0"
 
 dependencies:
   cupertino_icons: ^1.0.0
   flutter:
     sdk: flutter
-  maps: ^0.4.2
-  maps_adapter_google_maps: ^0.2.3
+  maps: any
+  maps_adapter_google_maps: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pedantic: ^1.9.2
+  pedantic: ^1.11.0
 
 dependency_overrides:
   maps:
     path: ../maps
   maps_adapter_google_maps:
     path: ../maps_adapter_google_maps
+
 flutter:
   uses-material-design: true

@@ -18,7 +18,7 @@
 ///   * [MapWidget]
 library maps;
 
-export 'package:database/database.dart' show GeoPoint;
+export 'package:kind/kind.dart' show GeoPoint;
 
 export 'src/adapters/apple_maps.dart';
 export 'src/adapters/bing_maps.dart';

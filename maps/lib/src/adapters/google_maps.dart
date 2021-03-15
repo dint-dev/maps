@@ -62,7 +62,7 @@ class GoogleMapsIframeAdapter extends MapAdapter {
     final location = mapWidget.location;
     final query = location.query;
     final geoPoint = location.geoPoint;
-    if (geoPoint != null && geoPoint.isValid) {
+    if (geoPoint != null) {
       sb.write('?q=');
       sb.write(geoPoint.latitude.toString());
       sb.write(',');
@@ -163,7 +163,7 @@ class GoogleMapsStaticAdapter extends MapAdapter {
     // Location
     final location = mapWidget.location;
     final geoPoint = location.geoPoint;
-    if (geoPoint != null && geoPoint.isValid) {
+    if (geoPoint != null) {
       sb.write('&center=');
       sb.write(geoPoint.latitude.toString());
       sb.write(',');
